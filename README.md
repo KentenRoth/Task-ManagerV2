@@ -1,1 +1,3 @@
-# Task-MangerV2
+# Task-ManagerV2
+
+Learning Typescript

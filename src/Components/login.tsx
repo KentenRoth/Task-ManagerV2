@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { getEffectiveTypeParameterDeclarations } from 'typescript';
 
 const Login = () => {
 	interface User {
@@ -25,10 +24,13 @@ const Login = () => {
 				pass: !login.password,
 				submitHandled: true,
 			});
-			return console.log(error);
+			return;
 		}
+		return sendData();
+	};
 
-		console.log(login);
+	const sendData = () => {
+		// This will send the data via Axios to the server
 	};
 
 	return (
@@ -44,8 +46,8 @@ const Login = () => {
 						placeholder="User Name"
 						onChange={(e) =>
 							setLogin({
+								...login,
 								userName: e.target.value,
-								password: login.password,
 							})
 						}
 					/>
@@ -57,7 +59,7 @@ const Login = () => {
 						placeholder="Password"
 						onChange={(e) =>
 							setLogin({
-								userName: login.userName,
+								...login,
 								password: e.target.value,
 							})
 						}

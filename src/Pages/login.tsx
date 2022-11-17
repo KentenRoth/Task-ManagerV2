@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
+import axiosConfig from '../axios/axiosconfig';
+
+// TODO
+// After successful login advance to main page
 
 const Login = () => {
 	interface User {
-		userName?: String;
+		username?: String;
 		password?: String;
 	}
 
@@ -18,9 +22,9 @@ const Login = () => {
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		setError({ submitHandled: false });
 		e.preventDefault();
-		if (!login.userName || !login.password) {
+		if (!login.username || !login.password) {
 			setError({
-				user: !login.userName,
+				user: !login.username,
 				pass: !login.password,
 				submitHandled: true,
 			});
@@ -30,9 +34,19 @@ const Login = () => {
 	};
 
 	const sendData = () => {
-		// This will send the data via Axios to the server
+		const { username, password } = login;
+		axiosConfig
+			.post('/users/login', {
+				username,
+				password,
+			})
+			.then((res) => {
+				console.log(res);
+				if (res.status === 200) {
+					localStorage.setItem('jswToken', res.data.authToken);
+				}
+			});
 	};
-
 	return (
 		<>
 			<div className="background-container">
@@ -57,7 +71,7 @@ const Login = () => {
 								onChange={(e) =>
 									setLogin({
 										...login,
-										userName: e.target.value,
+										username: e.target.value,
 									})
 								}
 							/>

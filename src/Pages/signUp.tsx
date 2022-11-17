@@ -1,4 +1,9 @@
+import axios from 'axios';
 import React, { useState } from 'react';
+import axiosConfig from '../axios/axiosconfig';
+
+//TODO
+// Redirect to main page if signup is completed
 
 const SignUp = () => {
 	interface User {
@@ -22,6 +27,7 @@ const SignUp = () => {
 
 	const [signup, setSignup] = useState<User>({} as User);
 	const [error, setError] = useState<Error>({} as Error);
+	const [redirect, setRedirect] = useState<Boolean>(false);
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		setError({ submitHandled: false });
@@ -49,7 +55,21 @@ const SignUp = () => {
 	};
 
 	const sendData = () => {
-		// This will send the data via Axios to the server
+		let { name, email, password1, username } = signup;
+		axiosConfig
+			.post('/users', {
+				name,
+				email,
+				username,
+				password: password1,
+			})
+			.then((res) => {
+				console.log(res);
+				if (res.status === 201) {
+					localStorage.setItem('jswToken', res.data.authToken);
+					setRedirect(true);
+				}
+			});
 	};
 
 	return (
@@ -64,7 +84,11 @@ const SignUp = () => {
 				<div className="signup">
 					<div className="signup_box">
 						<h2>Sign Up</h2>
-						<form className="signup_form" onSubmit={handleSubmit}>
+						<form
+							id="signup_form"
+							className="signup_form"
+							onSubmit={handleSubmit}
+						>
 							{error.email && error.submitHandled && (
 								<p>Please Check Email Address</p>
 							)}

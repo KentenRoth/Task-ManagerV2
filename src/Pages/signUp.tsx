@@ -8,21 +8,21 @@ import { Navigate } from 'react-router-dom';
 
 const SignUp = () => {
 	interface User {
-		email?: String;
-		username?: String;
-		name?: String;
-		password1?: String;
-		password2?: String;
+		email: String;
+		username: String;
+		name: String;
+		password1: String;
+		password2: String;
 	}
 
 	interface Error {
-		email?: boolean;
-		username?: boolean;
-		name?: boolean;
-		usernameTaken?: boolean;
-		password1?: boolean;
-		password2?: boolean;
-		passwordMatch?: boolean;
+		email: boolean;
+		username: boolean;
+		name: boolean;
+		usernameTaken: boolean;
+		password1: boolean;
+		password2: boolean;
+		passwordMatch: boolean;
 		submitHandled: boolean;
 	}
 
@@ -30,7 +30,7 @@ const SignUp = () => {
 	const [error, setError] = useState<Error>({} as Error);
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-		setError({ submitHandled: false });
+		setError({ ...error, submitHandled: false });
 		e.preventDefault();
 		if (signup.password1 !== signup.password2) {
 			setError({

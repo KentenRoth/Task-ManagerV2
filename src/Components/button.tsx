@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 interface props {
 	styles: String;
 	text: String;
-	clicked(): any;
+	clicked(): void;
 }
 
 const Button: FC<props> = (props) => {

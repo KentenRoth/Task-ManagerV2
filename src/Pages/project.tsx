@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import axiosUser from '../axios/axiosUser';
+import SelectProject from '../Modal/selectProject';
 
 // Show all Tasks for current project
 
 interface IState {
 	loggedIn: boolean;
 	projects: Array<Projects>;
+	modal: boolean;
+	title: string;
+	tickets: Array<Tickets>;
 }
 
 interface Projects {
@@ -16,25 +20,51 @@ interface Projects {
 	_id: string;
 }
 
+interface Tickets {
+	created: number;
+	summary: string;
+	description: string;
+	completed: boolean;
+	priority: string;
+	assigned?: string;
+	status?: string;
+	assignedTo?: string;
+	owner: string;
+	_id: string;
+}
+
 class TaskManager extends React.Component<{}, IState> {
 	constructor(props: {}) {
 		super(props);
 		this.state = {
+			modal: true,
 			loggedIn: true,
 			projects: [],
+			title: '',
+			tickets: [],
 		};
 	}
 
-	componentDidMount(): void {
-		axiosUser
-			.get('/projects')
-			.then((res) => console.log(res.data[0].tokens[0].token));
+	componentDidMount() {
+		axiosUser.get('/projects').then((res) => {
+			this.setState({ projects: res.data });
+		});
+		// res.data[0].tokens[0].token
 	}
 
-	render(): React.ReactNode {
+	selectedProject = (id: string) => {
+		axiosUser.get(`/projects/${id}`).then((res) => console.log(res));
+	};
+
+	render() {
 		return (
 			<>
-				<div className="taskManager"></div>
+				<div className="taskManager">
+					<SelectProject
+						projects={this.state.projects}
+						selected={this.selectedProject}
+					/>
+				</div>
 			</>
 		);
 	}

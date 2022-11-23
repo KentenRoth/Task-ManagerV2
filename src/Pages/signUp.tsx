@@ -1,9 +1,10 @@
-import axios from 'axios';
 import React, { useState } from 'react';
-import axiosConfig from '../axios/axiosconfig';
+import axiosUser from '../axios/axiosUser';
+import { Navigate } from 'react-router-dom';
 
 //TODO
 // Redirect to main page if signup is completed
+// Navigate replaced Redirect in react router dom
 
 const SignUp = () => {
 	interface User {
@@ -27,7 +28,6 @@ const SignUp = () => {
 
 	const [signup, setSignup] = useState<User>({} as User);
 	const [error, setError] = useState<Error>({} as Error);
-	const [redirect, setRedirect] = useState<Boolean>(false);
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		setError({ submitHandled: false });
@@ -56,7 +56,7 @@ const SignUp = () => {
 
 	const sendData = () => {
 		let { name, email, password1, username } = signup;
-		axiosConfig
+		axiosUser
 			.post('/users', {
 				name,
 				email,
@@ -67,7 +67,6 @@ const SignUp = () => {
 				console.log(res);
 				if (res.status === 201) {
 					localStorage.setItem('jswToken', res.data.authToken);
-					setRedirect(true);
 				}
 			});
 	};

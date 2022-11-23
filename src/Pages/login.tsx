@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axiosConfig from '../axios/axiosconfig';
+import axiosUser from '../axios/axiosUser';
 
 // TODO
 // After successful login advance to main page
@@ -35,7 +35,7 @@ const Login = () => {
 
 	const sendData = () => {
 		const { username, password } = login;
-		axiosConfig
+		axiosUser
 			.post('/users/login', {
 				username,
 				password,

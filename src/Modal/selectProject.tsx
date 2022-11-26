@@ -10,6 +10,7 @@ interface IProps {
 	}[];
 
 	selected(id: string): void;
+	show: boolean;
 }
 
 interface IState {
@@ -41,8 +42,12 @@ class SelectProject extends React.Component<IProps, IState> {
 	};
 
 	render() {
+		let showHide = this.props.show
+			? 'selectProject'
+			: 'selectProject hidden';
+
 		return (
-			<>
+			<div className={showHide}>
 				<form>
 					<select onChange={this.handleChange}>
 						<option value="default">Select A Project</option>
@@ -63,7 +68,7 @@ class SelectProject extends React.Component<IProps, IState> {
 						Select Project
 					</button>
 				</form>
-			</>
+			</div>
 		);
 	}
 }

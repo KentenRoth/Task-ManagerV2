@@ -20,12 +20,14 @@ type InitialState = {
 	projects: Projects[];
 	loading: boolean;
 	error: string;
+	currentProject: Projects;
 };
 
 const initialState: InitialState = {
 	projects: [],
 	loading: false,
 	error: '',
+	currentProject: {} as Projects,
 };
 
 export const fetchProjects = createAsyncThunk('projects/getProjects', () => {
@@ -56,12 +58,16 @@ export const projectsSlice = createSlice({
 		});
 	},
 	reducers: {
+		currentProject: (state, action: PayloadAction<string>) => {
+			// Action is returning the ID
+			console.log(state, action);
+		},
 		addNewProject: (state, action: PayloadAction<Projects>) => {
 			state.projects.push(action.payload);
 		},
 	},
 });
 
-// export const { addNewProject } = projectsSlice.actions;
+export const { currentProject, addNewProject } = projectsSlice.actions;
 
 export default projectsSlice.reducer;

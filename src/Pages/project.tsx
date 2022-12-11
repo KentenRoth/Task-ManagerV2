@@ -1,6 +1,7 @@
 import React from 'react';
 import axiosUser from '../axios/axiosUser';
 import SelectProject from '../Modal/selectProject';
+import SideBar from '../Components/sidebar';
 
 // Show all Tasks for current project
 // If no current projects Create Project shows on launch
@@ -74,11 +75,7 @@ class TaskManager extends React.Component<{}, IState> {
 		return (
 			<>
 				<div className="taskManager">
-					<SelectProject
-						show={this.state.selectProject}
-						projects={this.state.projects}
-						selected={this.selectedProject}
-					/>
+					<SideBar />
 				</div>
 			</>
 		);

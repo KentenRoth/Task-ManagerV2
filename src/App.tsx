@@ -9,6 +9,7 @@ import Login from './Pages/login';
 import SignUp from './Pages/signUp';
 import TaskManager from './Pages/project';
 import { AppDispatch } from './app/store';
+import Sidebar from './Components/sidebar';
 
 function App() {
 	const dispatch = useDispatch<AppDispatch>();

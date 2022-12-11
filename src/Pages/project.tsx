@@ -55,9 +55,9 @@ class TaskManager extends React.Component<{}, IState> {
 	}
 
 	componentDidMount() {
-		axiosUser.get('/projects').then((res) => {
-			this.setState({ projects: res.data });
-		});
+		// axiosUser.get('/projects').then((res) => {
+		// 	this.setState({ projects: res.data });
+		// });
 		// res.data[0].tokens[0].token
 	}
 

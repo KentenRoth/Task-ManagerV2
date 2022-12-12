@@ -1,6 +1,6 @@
-import React, { useDebugValue, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { AppDispatch, RootState } from '../app/store';
+import { AppDispatch } from '../app/store';
 import { currentProject } from '../features/projectSlice';
 
 interface IProps {
@@ -10,26 +10,45 @@ interface IProps {
 		title: string;
 		created: number;
 		_id: string;
+		tokens: Tokens[];
+		owner: string;
 	}[];
+}
 
-	show: boolean;
+type Project = {
+	admin?: string[];
+	team?: string[];
+	title: string;
+	created: number;
+	_id: string;
+	tokens: Tokens[];
+	owner: string;
+};
+
+interface Tokens {
+	_id: string;
+	token: string;
 }
 
 const SelectProject = (props: IProps) => {
-	const [showHide, setShowHide] = useState('selectProject');
 	const [disableButton, setDisableButton] = useState(true);
-	const [project, setProject] = useState('');
+	const [project, setProject] = useState({} as Project);
 
 	const dispatch = useDispatch<AppDispatch>();
 
 	const handleChange = (e: { target: HTMLSelectElement }) => {
+		const selected = e.target.options[e.target.selectedIndex];
+		const i = selected.dataset.index || 0;
 		if (e.target.value === 'default') return setDisableButton(true);
 		setDisableButton(false);
-		setProject(e.target.value);
+		setProject(props.projects[Number(i)]);
 	};
 
 	const handleSubmit = () => {
-		dispatch(currentProject(project));
+		const { _id, created, owner, title, team, admin, tokens } = project;
+		dispatch(
+			currentProject({ _id, created, owner, title, team, admin, tokens })
+		);
 	};
 
 	return (
@@ -37,9 +56,9 @@ const SelectProject = (props: IProps) => {
 			<form>
 				<select onChange={handleChange}>
 					<option value="default">Select A Project</option>
-					{props.projects.map((x) => {
+					{props.projects.map((x, i) => {
 						return (
-							<option key={x._id} value={x._id}>
+							<option key={x._id} data-index={i} value={x._id}>
 								{x.title}
 							</option>
 						);

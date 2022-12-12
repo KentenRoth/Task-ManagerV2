@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axiosUser from '../axios/axiosUser';
+import axiosProject from '../axios/axiosProject';
 
-interface Projects {
+type Projects = {
 	_id: string;
 	created: number;
 	owner: string;
@@ -9,6 +10,15 @@ interface Projects {
 	admin?: string[];
 	team?: string[];
 	tokens: Array<Tokens>;
+};
+
+interface CurrentProject {
+	_id: string;
+	title: string;
+	tokens: Tokens[];
+	owner: string;
+	admin?: string[];
+	team?: string[];
 }
 
 interface Tokens {
@@ -20,14 +30,14 @@ type InitialState = {
 	projects: Projects[];
 	loading: boolean;
 	error: string;
-	currentProject: Projects;
+	currentProject: CurrentProject;
 };
 
 const initialState: InitialState = {
 	projects: [],
 	loading: false,
 	error: '',
-	currentProject: {} as Projects,
+	currentProject: {} as CurrentProject,
 };
 
 export const fetchProjects = createAsyncThunk('projects/getProjects', () => {
@@ -58,13 +68,10 @@ export const projectsSlice = createSlice({
 		});
 	},
 	reducers: {
-		currentProject: (state, action: PayloadAction<string>) => {
-			// Action is returning the ID
-			console.log(state, action);
+		currentProject: (state, action: PayloadAction<Projects>) => {
+			state.currentProject = action.payload;
 		},
-		addNewProject: (state, action: PayloadAction<Projects>) => {
-			state.projects.push(action.payload);
-		},
+		addNewProject: (state, action: PayloadAction<Projects>) => {},
 	},
 });
 

@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 
 // Components
 import SelectProject from '../Modal/selectProject';
-import { currentProject } from '../features/projectSlice';
 
 const Sidebar = () => {
 	const dispatch = useDispatch<AppDispatch>();
@@ -18,7 +17,12 @@ const Sidebar = () => {
 
 	return (
 		<>
-			<SelectProject projects={allProjects.projects} show={showSelect} />
+			<div className={'sidebar'}>
+				<button>Select A Project</button>
+			</div>
+			{showSelect === true && (
+				<SelectProject projects={allProjects.projects} />
+			)}
 		</>
 	);
 };

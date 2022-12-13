@@ -71,7 +71,9 @@ export const projectsSlice = createSlice({
 		currentProject: (state, action: PayloadAction<Projects>) => {
 			state.currentProject = action.payload;
 		},
-		addNewProject: (state, action: PayloadAction<Projects>) => {},
+		addNewProject: (state, action: PayloadAction<Projects>) => {
+			state.projects.push(action.payload);
+		},
 	},
 });
 

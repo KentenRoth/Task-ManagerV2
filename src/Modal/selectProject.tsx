@@ -55,7 +55,7 @@ const SelectProject = (props: IProps) => {
 	};
 
 	return (
-		<div className={'selectProject'}>
+		<div className={'modal'}>
 			<form>
 				<select onChange={handleChange}>
 					<option value="default">Select A Project</option>

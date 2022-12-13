@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../app/store';
 import { currentProject } from '../features/projectSlice';
@@ -13,6 +13,7 @@ interface IProps {
 		tokens: Tokens[];
 		owner: string;
 	}[];
+	show(): void;
 }
 
 type Project = {
@@ -49,6 +50,8 @@ const SelectProject = (props: IProps) => {
 		dispatch(
 			currentProject({ _id, created, owner, title, team, admin, tokens })
 		);
+
+		props.show();
 	};
 
 	return (

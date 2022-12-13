@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import axiosUser from '../axios/axiosUser';
 
-const CreateTicket = () => {
+const CreateProject = () => {
 	interface Form {
 		title: String;
 	}
@@ -63,4 +63,4 @@ const CreateTicket = () => {
 	);
 };
 
-export default CreateTicket;
+export default CreateProject;

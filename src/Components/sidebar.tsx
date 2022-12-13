@@ -11,17 +11,24 @@ const Sidebar = () => {
 	const [selectedProject, setSelectedProject] = useState('');
 
 	// Function call to close the modal
-	const [showSelect, setShowSelect] = useState(true);
+	const [showSelect, setShowSelect] = useState(Boolean);
 
 	const allProjects = useSelector((state: RootState) => state.projects);
+
+	const showHide = () => {
+		setShowSelect((current) => !current);
+	};
 
 	return (
 		<>
 			<div className={'sidebar'}>
-				<button>Select A Project</button>
+				<button onClick={showHide}>Select A Project</button>
 			</div>
 			{showSelect === true && (
-				<SelectProject projects={allProjects.projects} />
+				<SelectProject
+					projects={allProjects.projects}
+					show={showHide}
+				/>
 			)}
 		</>
 	);

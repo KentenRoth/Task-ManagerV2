@@ -27,12 +27,14 @@ const CreateProject = (props: IProps) => {
 		setError({ ...error, submitHandled: false });
 		e.preventDefault();
 		if (!Object.values(create).some((v) => v)) {
-			return setError({
+			setError({
 				...error,
 				title: !create.title,
+				submitHandled: true,
 			});
+			return;
 		}
-		sendData();
+		return sendData();
 	};
 
 	const sendData = () => {

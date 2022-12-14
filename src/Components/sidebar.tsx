@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { AppDispatch, RootState } from '../app/store';
-import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../app/store';
+import { useSelector } from 'react-redux';
 
 // Components
 import SelectProject from '../Modal/selectProject';
@@ -8,12 +8,10 @@ import CreateProject from '../Modal/createProject';
 import CreateTicket from '../Modal/createTicket';
 
 const Sidebar = () => {
-	const dispatch = useDispatch<AppDispatch>();
-
 	// Function call to close the modal
 	const [showSelect, setShowSelect] = useState(Boolean);
-
 	const [showCreateProject, setShowCreateProject] = useState(Boolean);
+	const [showCreateTicket, setShowCreateTicket] = useState(Boolean);
 
 	const allProjects = useSelector((state: RootState) => state.projects);
 
@@ -25,11 +23,16 @@ const Sidebar = () => {
 		setShowCreateProject((current) => !current);
 	};
 
+	const showHideCreateTicket = () => {
+		setShowCreateTicket((current) => !current);
+	};
+
 	return (
 		<>
 			<div className={'sidebar'}>
 				<button onClick={showHideSelectProject}>Select Project</button>
 				<button onClick={showHideCreateProject}>Create Project</button>
+				<button onClick={showHideCreateTicket}>Create Ticket</button>
 			</div>
 			{showSelect === true && (
 				<SelectProject
@@ -40,7 +43,7 @@ const Sidebar = () => {
 			{showCreateProject === true && (
 				<CreateProject show={showHideCreateProject} />
 			)}
-			<CreateTicket />
+			<CreateTicket show={showHideCreateTicket} />
 		</>
 	);
 };

@@ -26,7 +26,13 @@ const SignUp = () => {
 		submitHandled: boolean;
 	}
 
-	const [signup, setSignup] = useState<User>({} as User);
+	const [signup, setSignup] = useState<User>({
+		name: '',
+		email: '',
+		username: '',
+		password1: '',
+		password2: '',
+	});
 	const [error, setError] = useState<Error>({} as Error);
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -38,8 +44,10 @@ const SignUp = () => {
 				passwordMatch: true,
 				submitHandled: true,
 			});
+			return;
 		}
-		if (!Object.values(signup).some((v) => v)) {
+
+		if (!Object.values(signup).every((v) => v)) {
 			setError({
 				...error,
 				email: !signup.email,
@@ -64,7 +72,6 @@ const SignUp = () => {
 				password: password1,
 			})
 			.then((res) => {
-				console.log(res);
 				if (res.status === 201) {
 					localStorage.setItem('jswToken', res.data.authToken);
 				}

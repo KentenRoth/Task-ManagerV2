@@ -18,7 +18,7 @@ interface IProps {
 }
 
 const CreateProject = (props: IProps) => {
-	const [create, setCreate] = useState<Form>({} as Form);
+	const [create, setCreate] = useState<Form>({ title: '' });
 	const [error, setError] = useState<Error>({} as Error);
 
 	const dispatch = useDispatch<AppDispatch>();
@@ -26,7 +26,7 @@ const CreateProject = (props: IProps) => {
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		setError({ ...error, submitHandled: false });
 		e.preventDefault();
-		if (!Object.values(create).some((v) => v)) {
+		if (!Object.values(create).every((v) => v)) {
 			setError({
 				...error,
 				title: !create.title,

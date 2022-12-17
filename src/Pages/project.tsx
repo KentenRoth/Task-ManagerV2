@@ -72,7 +72,9 @@ class TaskManager extends React.Component<{}, IState> {
 	render() {
 		return (
 			<>
-				<div className="taskManager"></div>
+				<section className="task-manager">
+					<div className="container"></div>
+				</section>
 			</>
 		);
 	}

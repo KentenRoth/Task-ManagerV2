@@ -57,35 +57,48 @@ export const CreateTicket = (props: IProps) => {
 	return (
 		<>
 			<div className={'modal'}>
-				<form id="create_ticket" onSubmit={handleSubmit}>
-					<input
-						type="text"
-						placeholder="Summary"
-						onChange={(e) =>
-							setCreate({ ...create, summary: e.target.value })
-						}
-					/>
-					<select
-						onChange={(e) =>
-							setCreate({ ...create, priority: e.target.value })
-						}
-					>
-						<option value="default">Select Priority Level</option>
-						<option value="low">Low</option>
-						<option value="medium">Medium</option>
-						<option value="high">High</option>
-					</select>
-					<textarea
-						placeholder="Description"
-						onChange={(e) =>
-							setCreate({
-								...create,
-								description: e.target.value,
-							})
-						}
-					/>
-					<button className="purple-button">Create Ticket</button>
-				</form>
+				<div className="modal-box">
+					<form id="create_ticket" onSubmit={handleSubmit}>
+						<input
+							type="text"
+							placeholder="Summary"
+							onChange={(e) =>
+								setCreate({
+									...create,
+									summary: e.target.value,
+								})
+							}
+						/>
+						<select
+							onChange={(e) =>
+								setCreate({
+									...create,
+									priority: e.target.value,
+								})
+							}
+						>
+							<option value="default">
+								Select Priority Level
+							</option>
+							<option value="low">Low</option>
+							<option value="medium">Medium</option>
+							<option value="high">High</option>
+						</select>
+						<textarea
+							placeholder="Description"
+							onChange={(e) =>
+								setCreate({
+									...create,
+									description: e.target.value,
+								})
+							}
+						/>
+						<button className="purple-button">Create Ticket</button>
+						<div onClick={props.show} className="close">
+							X
+						</div>
+					</form>
+				</div>
 			</div>
 		</>
 	);

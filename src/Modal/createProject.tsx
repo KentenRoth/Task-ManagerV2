@@ -55,7 +55,7 @@ const CreateProject = (props: IProps) => {
 	return (
 		<>
 			<div className="modal">
-				<div>
+				<div className="modal-box">
 					<form id="create_project" onSubmit={handleSubmit}>
 						<input
 							type="text"
@@ -67,6 +67,9 @@ const CreateProject = (props: IProps) => {
 						<button className="purple-button" type="submit">
 							Create Project
 						</button>
+						<div onClick={props.show} className="close">
+							X
+						</div>
 					</form>
 				</div>
 			</div>

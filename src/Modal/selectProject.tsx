@@ -56,26 +56,35 @@ const SelectProject = (props: IProps) => {
 
 	return (
 		<div className={'modal'}>
-			<form>
-				<select onChange={handleChange}>
-					<option value="default">Select A Project</option>
-					{props.projects.map((x, i) => {
-						return (
-							<option key={x._id} data-index={i} value={x._id}>
-								{x.title}
-							</option>
-						);
-					})}
-				</select>
-				<button
-					className="purple-button"
-					type="button"
-					onClick={handleSubmit}
-					disabled={disableButton}
-				>
-					Select Project
-				</button>
-			</form>
+			<div className="modal-box">
+				<form>
+					<select onChange={handleChange}>
+						<option value="default">Select A Project</option>
+						{props.projects.map((x, i) => {
+							return (
+								<option
+									key={x._id}
+									data-index={i}
+									value={x._id}
+								>
+									{x.title}
+								</option>
+							);
+						})}
+					</select>
+					<button
+						className="purple-button"
+						type="button"
+						onClick={handleSubmit}
+						disabled={disableButton}
+					>
+						Select Project
+					</button>
+					<div onClick={props.show} className="close">
+						X
+					</div>
+				</form>
+			</div>
 		</div>
 	);
 };

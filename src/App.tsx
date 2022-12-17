@@ -24,9 +24,10 @@ function App() {
 	return (
 		<>
 			<BrowserRouter>
-				<Header />
+				<Sidebar />
 				<div className="appContent">
-					<Sidebar />
+					<Header />
+
 					<Routes>
 						<Route path="/" element={<TaskManager />} />
 						<Route path="/login" element={<Login />} />

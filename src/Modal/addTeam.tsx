@@ -20,9 +20,6 @@ interface IProps {
 	show(): void;
 }
 
-// TODO This needs to get teammember by usernanme
-// TODO setup dispactch in Project Slice
-
 const AddTeam = (props: IProps) => {
 	const [team, setTeam] = useState<Form>({
 		memberLevel: '',

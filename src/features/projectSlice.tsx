@@ -74,9 +74,13 @@ export const projectsSlice = createSlice({
 		addNewProject: (state, action: PayloadAction<Projects>) => {
 			state.projects.push(action.payload);
 		},
+		addTeamMember: (state, action: PayloadAction<Projects>) => {
+			state.currentProject = action.payload;
+		},
 	},
 });
 
-export const { currentProject, addNewProject } = projectsSlice.actions;
+export const { currentProject, addNewProject, addTeamMember } =
+	projectsSlice.actions;
 
 export default projectsSlice.reducer;

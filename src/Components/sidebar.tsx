@@ -6,12 +6,14 @@ import { useSelector } from 'react-redux';
 import SelectProject from '../Modal/selectProject';
 import CreateProject from '../Modal/createProject';
 import CreateTicket from '../Modal/createTicket';
+import AddTeam from '../Modal/addTeam';
 
 const Sidebar = () => {
 	// Function call to close the modal
 	const [showSelect, setShowSelect] = useState(Boolean);
 	const [showCreateProject, setShowCreateProject] = useState(Boolean);
 	const [showCreateTicket, setShowCreateTicket] = useState(Boolean);
+	const [showAddTeam, setShowAddTeam] = useState(Boolean);
 
 	const allProjects = useSelector((state: RootState) => state.projects);
 
@@ -27,23 +29,31 @@ const Sidebar = () => {
 		setShowCreateTicket((current) => !current);
 	};
 
+	const showHideAddTeam = () => {
+		setShowAddTeam((current) => !current);
+	};
+
 	return (
 		<>
 			<div className={'sidebar'}>
 				<button onClick={showHideSelectProject}>Select Project</button>
 				<button onClick={showHideCreateProject}>Create Project</button>
 				<button onClick={showHideCreateTicket}>Create Ticket</button>
+				<button onClick={showHideAddTeam}>Add Team Member</button>
 			</div>
 			{showSelect === true && (
 				<SelectProject
 					projects={allProjects.projects}
-					show={showHideCreateProject}
+					show={showHideSelectProject}
 				/>
 			)}
 			{showCreateProject === true && (
 				<CreateProject show={showHideCreateProject} />
 			)}
-			<CreateTicket show={showHideCreateTicket} />
+			{showCreateTicket === true && (
+				<CreateTicket show={showHideCreateTicket} />
+			)}
+			{showAddTeam === true && <AddTeam show={showHideAddTeam} />}
 		</>
 	);
 };

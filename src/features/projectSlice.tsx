@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axiosUser from '../axios/axiosUser';
-import axiosProject from '../axios/axiosProject';
 
 type Projects = {
 	_id: string;

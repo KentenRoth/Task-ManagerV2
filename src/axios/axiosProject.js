@@ -1,12 +1,21 @@
 import axios from 'axios';
 
-const token = localStorage.getItem('projectID');
+const fetchTickets = () => {
+	const defaultOption = {
+		baseURL: 'http://localhost:3000',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	};
 
-const instance = axios.create({
-	baseURL: 'http://localhost:3000',
-	headers: {
-		Authorization: `Bearer ${token}`,
-	},
-});
+	let instance = axios.create(defaultOption);
 
-export default instance;
+	instance.interceptors.request.use(function (config) {
+		const token = localStorage.getItem('projectID');
+		config.headers.Authorization = `Bearer ${token}`;
+		return config;
+	});
+	return instance;
+};
+
+export default fetchTickets();

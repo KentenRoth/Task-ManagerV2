@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../app/store';
 import { currentProject } from '../features/projectSlice';
+import { addProjectTickets } from '../features/ticketSlice';
+import axiosProject from '../axios/axiosProject';
 
 interface IProps {
 	projects: {
@@ -43,6 +45,10 @@ const SelectProject = (props: IProps) => {
 		if (e.target.value === 'default') return setDisableButton(true);
 		setDisableButton(false);
 		setProject(props.projects[Number(i)]);
+		localStorage.setItem(
+			'projectID',
+			props.projects[Number(i)].tokens[0].token
+		);
 	};
 
 	const handleSubmit = () => {
@@ -50,7 +56,11 @@ const SelectProject = (props: IProps) => {
 		dispatch(
 			currentProject({ _id, created, owner, title, team, admin, tokens })
 		);
-
+		axiosProject.get('/tickets').then((res) => {
+			if (res.status === 200) {
+				dispatch(addProjectTickets(res.data));
+			}
+		});
 		props.show();
 	};
 

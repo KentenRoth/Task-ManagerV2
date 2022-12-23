@@ -23,7 +23,12 @@ const initialState: InitialState = {
 export const ticketSlice = createSlice({
 	name: 'tickets',
 	initialState,
-	reducers: {},
+	reducers: {
+		addProjectTickets: (state, action: PayloadAction<Tickets[]>) => {
+			state.tickets = action.payload;
+		},
+	},
 });
 
+export const { addProjectTickets } = ticketSlice.actions;
 export default ticketSlice.reducer;

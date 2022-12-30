@@ -1,31 +1,10 @@
-import React from 'react';
-import axiosUser from '../axios/axiosUser';
+import { RootState } from '../app/store';
+import { useSelector } from 'react-redux';
+
+import SoloTickets from './soloTickets';
 
 // Show all Tasks for current project
 // If no current projects Create Project shows on launch
-
-interface IState {
-	loggedIn: boolean;
-	projects: Array<Projects>;
-	selectProject: boolean;
-	title: string;
-	tickets: Array<Tickets>;
-	currentProject: Projects;
-}
-
-interface Projects {
-	admin?: string[];
-	team?: string[];
-	title: string;
-	created: number;
-	tokens: Array<Tokens>;
-	_id: string;
-}
-
-interface Tokens {
-	_id: string;
-	token: string;
-}
 
 interface Tickets {
 	created: number;
@@ -40,44 +19,27 @@ interface Tickets {
 	_id: string;
 }
 
-class TaskManager extends React.Component<{}, IState> {
-	constructor(props: {}) {
-		super(props);
-		this.state = {
-			selectProject: true,
-			loggedIn: true,
-			projects: [],
-			title: '',
-			tickets: [],
-			currentProject: {} as Projects,
-		};
+const TaskManager = () => {
+	const allTickets = useSelector((state: RootState) => state.tickets);
+	const hasTeam = useSelector(
+		(state: RootState) => state.projects.currentProject
+	);
+
+	if (hasTeam.admin?.length !== 0 || hasTeam.team?.length !== 0) {
+		console.log('Has Team');
+	} else {
+		console.log('No team');
 	}
 
-	componentDidMount() {
-		// axiosUser.get('/projects').then((res) => {
-		// 	this.setState({ projects: res.data });
-		// });
-		// res.data[0].tokens[0].token
-	}
-
-	selectedProject = (id: string) => {
-		axiosUser.get(`/projects/${id}`).then((res) => {
-			if (res.status !== 200) {
-				return console.log('Something Went Wrong');
-			}
-			this.setState({ currentProject: res.data, selectProject: false });
-		});
-	};
-
-	render() {
-		return (
-			<>
-				<section className="task-manager">
-					<div className="container"></div>
-				</section>
-			</>
-		);
-	}
-}
+	return (
+		<>
+			<section className="task-manager">
+				<div className="container">
+					<SoloTickets />
+				</div>
+			</section>
+		</>
+	);
+};
 
 export default TaskManager;

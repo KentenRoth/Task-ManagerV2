@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type Tickets = {
 	_id: string;
+	title: string;
 	summary: string;
 	description: string;
 	priority: string;
@@ -10,6 +11,7 @@ type Tickets = {
 	created: number;
 	completed: boolean;
 	assigned: boolean;
+	currentFocus: boolean;
 };
 
 type InitialState = {

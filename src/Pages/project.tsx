@@ -38,7 +38,6 @@ const TaskManager = () => {
 		}
 	}, [hasTeam]);
 
-	//! There has to be better way
 	let completed: Tickets[] = [];
 	let current: Tickets[] = [];
 	let high: Tickets[] = [];
@@ -46,7 +45,6 @@ const TaskManager = () => {
 	let low: Tickets[] = [];
 	let assigned: Tickets[] = [];
 	let unassigned: Tickets[] = [];
-	let priority: Tickets[] = [];
 
 	allTickets.tickets.forEach((ticket) => {
 		if (ticket.completed === true) {
@@ -55,17 +53,23 @@ const TaskManager = () => {
 		if (ticket.currentFocus === true) {
 			return current.push(ticket);
 		}
-		switch (ticket.priority) {
-			case 'high':
-				high.push(ticket);
-				break;
-			case 'medium':
-				medium.push(ticket);
-				break;
-			case 'low':
-				low.push(ticket);
-				break;
+		if (soloOrTeam === false) {
+			switch (ticket.priority) {
+				case 'high':
+					return high.push(ticket);
+					break;
+				case 'medium':
+					return medium.push(ticket);
+					break;
+				case 'low':
+					return low.push(ticket);
+					break;
+			}
 		}
+		if (ticket.assigned === true) {
+			return assigned.push(ticket);
+		}
+		return unassigned.push(ticket);
 	});
 
 	const showCompleted = () => {
@@ -83,30 +87,30 @@ const TaskManager = () => {
 							</button>
 						</div>
 						{soloOrTeam ? (
-							<SoloTickets tickets={current} />
-						) : (
 							<TeamTickets tickets={current} />
+						) : (
+							<SoloTickets tickets={current} />
 						)}
 					</div>
 					<div className="high-priority-tickets column">
 						{soloOrTeam ? (
-							<SoloTickets tickets={high} />
-						) : (
 							<TeamTickets tickets={assigned} />
+						) : (
+							<SoloTickets tickets={high} />
 						)}
 					</div>
 					<div className="medium-priority-tickets column">
 						{soloOrTeam ? (
-							<SoloTickets tickets={medium} />
-						) : (
 							<TeamTickets tickets={unassigned} />
+						) : (
+							<SoloTickets tickets={medium} />
 						)}
 					</div>
 					<div className="low-priority-tickets column">
 						{soloOrTeam ? (
-							<SoloTickets tickets={low} />
+							<TeamTickets tickets={completed} />
 						) : (
-							<TeamTickets tickets={priority} />
+							<SoloTickets tickets={low} />
 						)}
 					</div>
 				</div>

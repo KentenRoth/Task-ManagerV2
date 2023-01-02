@@ -2,7 +2,8 @@ import { RootState } from '../app/store';
 import { useSelector } from 'react-redux';
 
 import SoloTickets from './soloTickets';
-import { useState } from 'react';
+import TeamTickets from './teamTickets';
+import { useState, useEffect } from 'react';
 
 // Show all Tasks for current project
 // If no current projects Create Project shows on launch
@@ -24,15 +25,28 @@ interface Tickets {
 const TaskManager = () => {
 	const allTickets = useSelector((state: RootState) => state.tickets);
 	const [currentOrCompleted, setCurrentOrCompleted] = useState(Boolean);
+	const [soloOrTeam, setSoloOrTeam] = useState(Boolean);
 	const hasTeam = useSelector(
 		(state: RootState) => state.projects.currentProject
 	);
 
+	useEffect(() => {
+		if (hasTeam.admin?.length !== 0 || hasTeam.team?.length !== 0) {
+			setSoloOrTeam(true);
+		} else {
+			setSoloOrTeam(false);
+		}
+	}, [hasTeam]);
+
+	//! There has to be better way
 	let completed: Tickets[] = [];
 	let current: Tickets[] = [];
 	let high: Tickets[] = [];
 	let medium: Tickets[] = [];
 	let low: Tickets[] = [];
+	let assigned: Tickets[] = [];
+	let unassigned: Tickets[] = [];
+	let priority: Tickets[] = [];
 
 	allTickets.tickets.forEach((ticket) => {
 		if (ticket.completed === true) {
@@ -58,12 +72,6 @@ const TaskManager = () => {
 		setCurrentOrCompleted((current) => !current);
 	};
 
-	if (hasTeam.admin?.length !== 0 || hasTeam.team?.length !== 0) {
-		console.log('Has Team');
-	} else {
-		console.log('No team');
-	}
-
 	return (
 		<>
 			<section className="task-manager">
@@ -74,16 +82,32 @@ const TaskManager = () => {
 								Completed Tasks
 							</button>
 						</div>
-						<SoloTickets tickets={current} />
+						{soloOrTeam ? (
+							<SoloTickets tickets={current} />
+						) : (
+							<TeamTickets tickets={current} />
+						)}
 					</div>
 					<div className="high-priority-tickets column">
-						<SoloTickets tickets={high} />
+						{soloOrTeam ? (
+							<SoloTickets tickets={high} />
+						) : (
+							<TeamTickets tickets={assigned} />
+						)}
 					</div>
 					<div className="medium-priority-tickets column">
-						<SoloTickets tickets={medium} />
+						{soloOrTeam ? (
+							<SoloTickets tickets={medium} />
+						) : (
+							<TeamTickets tickets={unassigned} />
+						)}
 					</div>
 					<div className="low-priority-tickets column">
-						<SoloTickets tickets={low} />
+						{soloOrTeam ? (
+							<SoloTickets tickets={low} />
+						) : (
+							<TeamTickets tickets={priority} />
+						)}
 					</div>
 				</div>
 			</section>

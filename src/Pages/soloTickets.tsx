@@ -1,5 +1,3 @@
-import { useSelector } from 'react-redux';
-import { RootState } from '../app/store';
 import Ticket from '../Components/ticket';
 
 // TODO sort by Current Focus (toggles to completed), High, Medium, Low,
@@ -24,7 +22,7 @@ const SoloTickets = (props: IProps) => {
 	return (
 		<>
 			{props.tickets.map((ticket) => {
-				return <Ticket ticket={ticket} />;
+				return <Ticket key={ticket._id} ticket={ticket} />;
 			})}
 		</>
 	);

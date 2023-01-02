@@ -8,6 +8,7 @@ interface Ticket {
 	priority: string;
 	status: string;
 	owner: string;
+	assignedTo: string;
 	created: number;
 	completed: boolean;
 	assigned: boolean;
@@ -18,8 +19,15 @@ type IProps = {
 	ticket: Ticket;
 };
 const SingleTicket = (props: IProps) => {
-	const { _id, summary, completed, priority, title, currentFocus } =
-		props.ticket;
+	const {
+		_id,
+		summary,
+		completed,
+		priority,
+		title,
+		currentFocus,
+		assignedTo,
+	} = props.ticket;
 	let color: string = priority;
 
 	if (completed === true) {
@@ -35,6 +43,9 @@ const SingleTicket = (props: IProps) => {
 			<div>
 				<h2>{title}</h2>
 				<p>{summary}</p>
+			</div>
+			<div>
+				<p>{assignedTo}</p>
 			</div>
 		</div>
 	);

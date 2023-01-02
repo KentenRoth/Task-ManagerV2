@@ -11,6 +11,7 @@ interface IProps {
 		priority: string;
 		status: string;
 		owner: string;
+		assignedTo: string;
 		created: number;
 		completed: boolean;
 		assigned: boolean;

@@ -40,7 +40,7 @@ const TaskManager = () => {
 	}, [hasTeam]);
 
 	let completed: Tickets[] = [];
-	let current: Tickets[] = [];
+	let currentTask: Tickets[] = [];
 	let high: Tickets[] = [];
 	let medium: Tickets[] = [];
 	let low: Tickets[] = [];
@@ -52,7 +52,7 @@ const TaskManager = () => {
 			return completed.push(ticket);
 		}
 		if (ticket.currentFocus === true) {
-			return current.push(ticket);
+			return currentTask.push(ticket);
 		}
 		if (soloOrTeam === false) {
 			switch (ticket.priority) {
@@ -88,9 +88,11 @@ const TaskManager = () => {
 							</button>
 						</div>
 						{soloOrTeam ? (
-							<TeamTickets tickets={current} />
+							<TeamTickets tickets={currentTask} />
+						) : currentOrCompleted ? (
+							<SoloTickets tickets={completed} />
 						) : (
-							<SoloTickets tickets={current} />
+							<SoloTickets tickets={currentTask} />
 						)}
 					</div>
 					<div className="high-priority-tickets column">

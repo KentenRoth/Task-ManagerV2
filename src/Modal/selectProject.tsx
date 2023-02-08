@@ -7,8 +7,8 @@ import axiosProject from '../axios/axiosProject';
 
 interface IProps {
 	projects: {
-		admin?: string[];
-		team?: string[];
+		admin?: Teammember[];
+		team?: Teammember[];
 		title: string;
 		created: number;
 		_id: string;
@@ -19,14 +19,19 @@ interface IProps {
 }
 
 type Project = {
-	admin?: string[];
-	team?: string[];
+	admin?: Teammember[];
+	team?: Teammember[];
 	title: string;
 	created: number;
 	_id: string;
 	tokens: Tokens[];
 	owner: string;
 };
+
+interface Teammember {
+	_id: string;
+	name: string;
+}
 
 interface Tokens {
 	_id: string;

@@ -6,8 +6,8 @@ type Projects = {
 	created: number;
 	owner: string;
 	title: string;
-	admin?: string[];
-	team?: string[];
+	admin?: Teammember[];
+	team?: Teammember[];
 	tokens: Array<Tokens>;
 };
 
@@ -16,13 +16,18 @@ interface CurrentProject {
 	title: string;
 	tokens: Tokens[];
 	owner: string;
-	admin?: string[];
-	team?: string[];
+	admin?: Teammember[];
+	team?: Teammember[];
 }
 
 interface Tokens {
 	_id: string;
 	token: string;
+}
+
+interface Teammember {
+	_id: string;
+	name: string;
 }
 
 type InitialState = {

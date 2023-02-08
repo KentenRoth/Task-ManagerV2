@@ -66,16 +66,21 @@ const AddTeam = (props: IProps) => {
 
 	const sendData = () => {
 		let { memberLevel, username } = team;
+		let member = memberLevel.slice(0, -1);
 		const id = store.getState().projects.currentProject._id;
 		axiosUser.get(`/users/${username}`).then((res) => {
 			if (res.status !== 200)
 				return console.log('could not add teammember');
 			axiosUser
 				.patch(`/projects/${id}`, {
-					[memberLevel]: res.data._id,
+					[memberLevel]: {
+						[member]: {
+							name: res.data.username,
+							id: res.data._id,
+						},
+					},
 				})
 				.then((res) => {
-					console.log(res.status);
 					if (res.status === 200) {
 						dispatch(addTeamMember(res.data));
 					}
@@ -92,8 +97,8 @@ const AddTeam = (props: IProps) => {
 							<option value="default">
 								Please Select Member Level
 							</option>
-							<option value={'admin'}>Admin</option>
-							<option value={'team'}>Team Member</option>
+							<option value={'admins'}>Admin</option>
+							<option value={'teams'}>Team Member</option>
 						</select>
 						<input
 							type="text"
@@ -107,7 +112,7 @@ const AddTeam = (props: IProps) => {
 							type="submit"
 							disabled={disableButton}
 						>
-							Create Project
+							Add Team Memeber
 						</button>
 						<div onClick={props.show} className="close">
 							X

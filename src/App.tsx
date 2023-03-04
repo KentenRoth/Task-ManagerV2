@@ -11,9 +11,7 @@ import { fetchProjects } from './features/projectSlice';
 import Login from './Pages/login';
 import SignUp from './Pages/signUp';
 import TaskManager from './Pages/project';
-import Sidebar from './Components/sidebar';
-import Header from './Components/header';
-import Footer from './Components/footer';
+import SidebarHeaderFooter from './Components/extraComponents';
 
 function App() {
 	const dispatch = useDispatch<AppDispatch>();
@@ -25,16 +23,13 @@ function App() {
 	return (
 		<>
 			<BrowserRouter>
-				<Sidebar />
-				<div className="appContent">
-					<Header />
-					<Routes>
+				<Routes>
+					<Route path="/" element={<SidebarHeaderFooter />}>
 						<Route path="/" element={<TaskManager />} />
-						<Route path="/login" element={<Login />} />
-						<Route path="/signup" element={<SignUp />} />
-					</Routes>
-					<Footer />
-				</div>
+					</Route>
+					<Route path="/login" element={<Login />} />
+					<Route path="/signup" element={<SignUp />} />
+				</Routes>
 			</BrowserRouter>
 		</>
 	);

@@ -50,12 +50,6 @@ const Login = () => {
 	return (
 		<>
 			<div className="background-container">
-				{/* <img
-					src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1231630/moon2.png"
-					alt=""
-				/> */}
-				<div className="stars"></div>
-				<div className="twinkling"></div>
 				<div className="login">
 					<div className="login_box">
 						<h2>Please Login</h2>
@@ -90,9 +84,14 @@ const Login = () => {
 									})
 								}
 							/>
-							<button className="purple-button" type="submit">
-								Login
-							</button>
+							<div className="button-box">
+								<button className="purple-button" type="submit">
+									Login
+								</button>
+								<button className="purple-button">
+									Sign Up
+								</button>
+							</div>
 						</form>
 					</div>
 				</div>

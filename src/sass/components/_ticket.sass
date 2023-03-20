@@ -2,8 +2,9 @@
     display: flex
     padding: 1rem 4rem
     color: white
-    border-radius: 20px
+    border-radius: 10px
     justify-content: center
+    margin-bottom: 20px
     h2
         text-align: center
     p
@@ -11,16 +12,16 @@
         font-weight: 500
 
 .high 
-    background: $high
+    background: radial-gradient(circle at right, $high, $dark-gray 90%)
 
 .medium
-    background: $medium
+    background: radial-gradient(circle at right, $medium -10%, $dark-gray 90%)
 
 .low
-    background: $low
+    background: radial-gradient(circle at right, $low -15%, $dark-gray 90%)
 
 .completed
-    background: $completed
+    background: radial-gradient(circle at right, $completed -15%, $dark-gray 90%)
 
 .current
-    background: $current
+    background: radial-gradient(circle at right, $current, $dark-gray 90%)

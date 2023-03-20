@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
+import axiosProject from '../axios/axiosProject';
+import { AppDispatch } from '../app/store';
+import { useDispatch } from 'react-redux';
+import { createTicket } from '../features/ticketSlice';
 
 interface Form {
+	title: string;
 	summary: string;
 	description: string;
 	priority: string;
 }
 
 interface Error {
+	title: boolean;
 	summary: boolean;
 	description: boolean;
 	priority: boolean;
@@ -19,11 +25,14 @@ interface IProps {
 
 export const CreateTicket = (props: IProps) => {
 	const [create, setCreate] = useState<Form>({
+		title: '',
 		summary: '',
 		description: '',
 		priority: '',
 	});
 	const [error, setError] = useState<Error>({} as Error);
+
+	const dispatch = useDispatch<AppDispatch>();
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		setError({ ...error, submitHandled: false });
@@ -49,9 +58,22 @@ export const CreateTicket = (props: IProps) => {
 	};
 
 	const sendData = () => {
-		// This will send the data
-		// TODO The ticket slice still needs created
-		console.log('running');
+		let { title, summary, description, priority } = create;
+		axiosProject
+			.post('tickets', {
+				title,
+				summary,
+				description,
+				priority,
+			})
+			.then((res) => {
+				console.log(res);
+				if (res.status === 200) {
+					dispatch(createTicket(res.data));
+					return props.show();
+				}
+				console.log('There was an error creating the ticket');
+			});
 	};
 
 	return (
@@ -59,6 +81,16 @@ export const CreateTicket = (props: IProps) => {
 			<div className={'modal'}>
 				<div className="modal-box">
 					<form id="create_ticket" onSubmit={handleSubmit}>
+						<input
+							type="text"
+							placeholder="Title"
+							onChange={(e) => {
+								setCreate({
+									...create,
+									title: e.target.value,
+								});
+							}}
+						/>
 						<input
 							type="text"
 							placeholder="Summary"

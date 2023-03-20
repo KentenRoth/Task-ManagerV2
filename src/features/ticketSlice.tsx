@@ -30,8 +30,11 @@ export const ticketSlice = createSlice({
 		addProjectTickets: (state, action: PayloadAction<Tickets[]>) => {
 			state.tickets = action.payload;
 		},
+		createTicket: (state, action: PayloadAction<Tickets>) => {
+			state.tickets.push(action.payload);
+		},
 	},
 });
 
-export const { addProjectTickets } = ticketSlice.actions;
+export const { addProjectTickets, createTicket } = ticketSlice.actions;
 export default ticketSlice.reducer;

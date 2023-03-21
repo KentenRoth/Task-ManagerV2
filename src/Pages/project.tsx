@@ -32,7 +32,7 @@ const TaskManager = () => {
 	);
 
 	useEffect(() => {
-		if (hasTeam.admin?.length !== 0 || hasTeam.team?.length !== 0) {
+		if (hasTeam.admin?.length !== 0 || hasTeam.teams?.length !== 0) {
 			setSoloOrTeam(true);
 		} else {
 			setSoloOrTeam(false);

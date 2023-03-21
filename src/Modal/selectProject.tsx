@@ -8,7 +8,7 @@ import axiosProject from '../axios/axiosProject';
 interface IProps {
 	projects: {
 		admin?: Teammember[];
-		team?: Teammember[];
+		teams?: Teammember[];
 		title: string;
 		created: number;
 		_id: string;
@@ -20,7 +20,7 @@ interface IProps {
 
 type Project = {
 	admin?: Teammember[];
-	team?: Teammember[];
+	teams?: Teammember[];
 	title: string;
 	created: number;
 	_id: string;
@@ -57,9 +57,9 @@ const SelectProject = (props: IProps) => {
 	};
 
 	const handleSubmit = () => {
-		const { _id, created, owner, title, team, admin, tokens } = project;
+		const { _id, created, owner, title, teams, admin, tokens } = project;
 		dispatch(
-			currentProject({ _id, created, owner, title, team, admin, tokens })
+			currentProject({ _id, created, owner, title, teams, admin, tokens })
 		);
 		axiosProject.get('/tickets').then((res) => {
 			if (res.status === 200) {

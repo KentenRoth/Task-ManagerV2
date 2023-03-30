@@ -58,13 +58,10 @@ const TaskManager = () => {
 			switch (ticket.priority) {
 				case 'high':
 					return high.push(ticket);
-					break;
 				case 'medium':
 					return medium.push(ticket);
-					break;
 				case 'low':
 					return low.push(ticket);
-					break;
 			}
 		}
 		if (ticket.assigned === true) {

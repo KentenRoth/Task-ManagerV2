@@ -16,11 +16,23 @@ interface Error {
 	submitHandled: boolean;
 }
 
+type Project = {
+	admin?: Teammember[];
+	team?: Teammember[];
+};
+
+interface Teammember {
+	_id: string;
+	name: string;
+}
+
 interface IProps {
+	current: Project;
 	show(): void;
 }
 
 const AddTeam = (props: IProps) => {
+	console.log(props.current);
 	const [team, setTeam] = useState<Form>({
 		memberLevel: '',
 		username: '',

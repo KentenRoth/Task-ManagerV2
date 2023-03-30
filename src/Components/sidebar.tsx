@@ -16,6 +16,9 @@ const Sidebar = () => {
 	const [showAddTeam, setShowAddTeam] = useState(Boolean);
 
 	const allProjects = useSelector((state: RootState) => state.projects);
+	const currentProject = useSelector(
+		(state: RootState) => state.projects.currentProject
+	);
 
 	const showHideSelectProject = () => {
 		setShowSelect((current) => !current);
@@ -39,7 +42,7 @@ const Sidebar = () => {
 				<button onClick={showHideSelectProject}>Select Project</button>
 				<button onClick={showHideCreateProject}>Create Project</button>
 				<button onClick={showHideCreateTicket}>Create Ticket</button>
-				<button onClick={showHideAddTeam}>Add Team Member</button>
+				<button onClick={showHideAddTeam}>Edit Team</button>
 			</div>
 			{showSelect === true && (
 				<SelectProject
@@ -53,7 +56,9 @@ const Sidebar = () => {
 			{showCreateTicket === true && (
 				<CreateTicket show={showHideCreateTicket} />
 			)}
-			{showAddTeam === true && <AddTeam show={showHideAddTeam} />}
+			{showAddTeam === true && (
+				<AddTeam current={currentProject} show={showHideAddTeam} />
+			)}
 		</>
 	);
 };

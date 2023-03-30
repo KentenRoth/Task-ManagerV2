@@ -5,11 +5,29 @@
     border-radius: 10px
     justify-content: center
     margin-bottom: 20px
-    h2
-        text-align: center
-    p
-        font-size: 1.1rem
-        font-weight: 500
+    flex-direction: column
+    text-align: center
+    position: relative
+    z-index: 3
+    &_edit
+        position: absolute
+        top: 10px
+        right: 10px
+        z-index: 5
+        button
+            border: 1px solid $dark-gray
+            color: white
+            border-radius: 5px
+            padding: 5px 10px
+            background: transparent
+            background: rgba(0,0,0, 0.2)
+            
+    &_top-copy
+        p
+            text-align: center
+            font-size: 1.1rem
+            font-weight: 500
+
 
 .high 
     background: radial-gradient(circle at right, $high, $dark-gray 90%)

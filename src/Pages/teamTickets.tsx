@@ -1,4 +1,4 @@
-import Ticket from '../Components/ticket';
+import Ticket from '../Components/Tickets/ticket';
 
 // TODO sort by Current Focus (toggles to completed), Assigned, Unassigned, Priority level will sort within column
 

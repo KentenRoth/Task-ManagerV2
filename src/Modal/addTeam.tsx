@@ -17,8 +17,8 @@ interface Error {
 }
 
 type Project = {
-	admin?: Teammember[];
-	team?: Teammember[];
+	admins?: Teammember[];
+	teams?: Teammember[];
 };
 
 interface Teammember {
@@ -32,7 +32,6 @@ interface IProps {
 }
 
 const AddTeam = (props: IProps) => {
-	console.log(props.current);
 	const [team, setTeam] = useState<Form>({
 		memberLevel: '',
 		username: '',
@@ -95,6 +94,7 @@ const AddTeam = (props: IProps) => {
 				.then((res) => {
 					if (res.status === 200) {
 						dispatch(addTeamMember(res.data));
+						props.show();
 					}
 				});
 		});

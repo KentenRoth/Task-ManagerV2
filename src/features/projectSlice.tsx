@@ -6,7 +6,7 @@ type Projects = {
 	created: number;
 	owner: string;
 	title: string;
-	admin?: Teammember[];
+	admins?: Teammember[];
 	teams?: Teammember[];
 	tokens: Array<Tokens>;
 };
@@ -16,7 +16,7 @@ interface CurrentProject {
 	title: string;
 	tokens: Tokens[];
 	owner: string;
-	admin?: Teammember[];
+	admins?: Teammember[];
 	teams?: Teammember[];
 }
 

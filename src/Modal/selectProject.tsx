@@ -19,7 +19,7 @@ interface IProps {
 }
 
 type Project = {
-	admin?: Teammember[];
+	admins?: Teammember[];
 	teams?: Teammember[];
 	title: string;
 	created: number;
@@ -57,9 +57,17 @@ const SelectProject = (props: IProps) => {
 	};
 
 	const handleSubmit = () => {
-		const { _id, created, owner, title, teams, admin, tokens } = project;
+		const { _id, created, owner, title, teams, admins, tokens } = project;
 		dispatch(
-			currentProject({ _id, created, owner, title, teams, admin, tokens })
+			currentProject({
+				_id,
+				created,
+				owner,
+				title,
+				teams,
+				admins,
+				tokens,
+			})
 		);
 		axiosProject.get('/tickets').then((res) => {
 			if (res.status === 200) {

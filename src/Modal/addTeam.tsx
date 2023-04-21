@@ -72,12 +72,28 @@ const AddTeam = (props: IProps) => {
 			});
 			return;
 		}
-		return sendData();
+
+		const isAdmin = store
+			.getState()
+			.projects.currentProject.admins?.find(
+				(x) => x.name === team.username
+			);
+		const isTeam = store
+			.getState()
+			.projects.currentProject.teams?.find(
+				(x) => x.name === team.username
+			);
+
+		if (!isAdmin && !isTeam) {
+			return sendData();
+		}
+		// TODO need to throw error if user is already a teammember
+
+		return console.log('already on the team');
 	};
 
 	const sendData = () => {
 		let { memberLevel, username } = team;
-		let member = memberLevel.slice(0, -1);
 		const id = store.getState().projects.currentProject._id;
 		axiosUser.get(`/users/${username}`).then((res) => {
 			if (res.status !== 200)
@@ -85,10 +101,8 @@ const AddTeam = (props: IProps) => {
 			axiosUser
 				.patch(`/projects/${id}`, {
 					[memberLevel]: {
-						[member]: {
-							name: res.data.username,
-							id: res.data._id,
-						},
+						name: res.data.username,
+						id: res.data._id,
 					},
 				})
 				.then((res) => {

@@ -1,5 +1,9 @@
 // TODO will hold ticket details.  Also class will be added for Completed, Priority level, Current Focus
-import { useState } from 'react';
+import { useState, MouseEvent, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../app/store';
+import axiosProject from '../../axios/axiosProject';
+import { updateProjectTickets } from '../../features/ticketSlice';
 import AssignedTo from './assignedTo';
 import Description from './description';
 
@@ -25,9 +29,32 @@ type IProps = {
 const SingleTicket = (props: IProps) => {
 	const [showTicketDetails, setShowTicketDetails] = useState(Boolean);
 	const [showEditDetails, setShowEditDetails] = useState(Boolean);
+	const [isTicketCompleted, setIsTicketCompleted] = useState(
+		props.ticket.completed
+	);
+
+	const dispatch = useDispatch<AppDispatch>();
 
 	const showHideTicketDetails = () => {
 		setShowTicketDetails((current) => !current);
+	};
+
+	useEffect(() => {
+		setIsTicketCompleted(props.ticket.completed);
+	}, [props.ticket.completed]);
+
+	const ticketCompletedClicked = (e: MouseEvent<HTMLButtonElement>) => {
+		const parent = e.target as HTMLInputElement;
+		setIsTicketCompleted((current) => !current);
+		axiosProject
+			.patch(`tickets/${parent.parentElement?.offsetParent?.id}`, {
+				completed: !isTicketCompleted,
+			})
+			.then((res) => {
+				if (res.status === 200) {
+					dispatch(updateProjectTickets(res.data));
+				}
+			});
 	};
 
 	const showEdit = () => {
@@ -57,8 +84,9 @@ const SingleTicket = (props: IProps) => {
 
 	return (
 		<div className={`ticket ${color}`} id={_id}>
-			<div onClick={showEdit} className="ticket_edit">
-				<button>Edit</button>
+			<div className="ticket_edit">
+				<button onClick={showEdit}>Edit</button>
+				<button onClick={ticketCompletedClicked}>Completed</button>
 			</div>
 			<div onClick={showHideTicketDetails}>
 				<div className="ticket_top-copy">

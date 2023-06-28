@@ -1,4 +1,7 @@
 import TeamTickets from '../Pages/teamTickets';
+import { RootState } from '../app/store';
+import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 
 interface Tickets {
 	_id: string;
@@ -15,39 +18,64 @@ interface Tickets {
 	currentFocus: boolean;
 }
 
-type IProps = {
-	tickets: Tickets[];
-};
+const TeamBoard = () => {
+	const allTickets = useSelector((state: RootState) => state.tickets);
+	const [tickets, setTickets] = useState<Tickets[]>([]);
+	const [completed, setCompleted] = useState<Tickets[]>([]);
 
-let completed: Tickets[] = [];
-let currentTask: Tickets[] = [];
-let unassigned: Tickets[] = [];
-let assigned: Tickets[] = [];
+	useEffect(() => {
+		sortTickets(allTickets.tickets);
+	}, [allTickets]);
 
-const TeamBoard = (props: IProps) => {
-	props.tickets.forEach((ticket) => {
-		if (ticket.completed === true) {
-			return completed.push(ticket);
-		}
-		if (ticket.currentFocus === true) {
-			return currentTask.push(ticket);
-		}
-		if (ticket.assigned === true) {
-			return assigned.push(ticket);
-		}
-		return unassigned.push(ticket);
-	});
+	const sortTickets = (array: Tickets[]) => {
+		const ticketGroups: {
+			[key: string]: Tickets[];
+		} = {
+			currentFocus: [],
+			unassigned: [],
+			assigned: [],
+			completed: [],
+		};
+
+		array.forEach((ticket) => {
+			if (ticket.completed) {
+				return ticketGroups.completed.push(ticket);
+			}
+			if (ticket.currentFocus) {
+				return ticketGroups.currentFocus.push(ticket);
+			}
+			if (ticket.assigned) {
+				return ticketGroups.assigned.push(ticket);
+			}
+			return ticketGroups.unassigned.push(ticket);
+		});
+
+		setTickets([
+			...ticketGroups.currentFocus,
+			...ticketGroups.unassigned,
+			...ticketGroups.assigned,
+		]);
+		setCompleted(ticketGroups.completed);
+	};
 
 	return (
 		<>
 			<div className="team-current-focus">
-				<TeamTickets tickets={currentTask} />
+				<TeamTickets
+					tickets={tickets.filter((ticket) => ticket.currentFocus)}
+				/>
 			</div>
 			<div className="team-unassigned">
-				<TeamTickets tickets={unassigned} />
+				<TeamTickets
+					tickets={tickets.filter(
+						(ticket) => !ticket.currentFocus && !ticket.assigned
+					)}
+				/>
 			</div>
 			<div className="team-assigned">
-				<TeamTickets tickets={assigned} />
+				<TeamTickets
+					tickets={tickets.filter((ticket) => ticket.assigned)}
+				/>
 			</div>
 			<div className="team-assigned">
 				<TeamTickets tickets={completed} />

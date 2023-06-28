@@ -24,11 +24,7 @@ const TaskManager = () => {
 		<>
 			<section className="task-manager">
 				<div className="task-manager_container">
-					{soloOrTeam ? (
-						<TeamBoard tickets={allTickets.tickets} />
-					) : (
-						<SoloBoard tickets={allTickets.tickets} />
-					)}
+					{soloOrTeam ? <TeamBoard /> : <SoloBoard />}
 				</div>
 			</section>
 		</>

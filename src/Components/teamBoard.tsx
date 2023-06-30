@@ -28,6 +28,7 @@ const TeamBoard = () => {
 	}, [allTickets]);
 
 	const sortTickets = (array: Tickets[]) => {
+		console.log(allTickets);
 		const ticketGroups: {
 			[key: string]: Tickets[];
 		} = {

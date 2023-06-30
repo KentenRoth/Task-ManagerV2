@@ -26,7 +26,7 @@ const SoloBoard = () => {
 
 	useEffect(() => {
 		sortTickets(allTickets.tickets);
-	});
+	}, [allTickets]);
 
 	let sortTickets = (array: Tickets[]) => {
 		const ticketGroups: {
@@ -55,7 +55,7 @@ const SoloBoard = () => {
 
 	return (
 		<>
-			<div>
+			<div className="solo">
 				<SoloTickets
 					tickets={tickets.filter((ticket) => ticket.currentFocus)}
 				/>

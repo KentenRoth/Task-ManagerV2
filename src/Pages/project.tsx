@@ -6,19 +6,28 @@ import TeamBoard from '../Components/teamBoard';
 import { useState, useEffect } from 'react';
 
 const TaskManager = () => {
-	const allTickets = useSelector((state: RootState) => state.tickets);
 	const [soloOrTeam, setSoloOrTeam] = useState(Boolean);
 	const hasTeam = useSelector(
 		(state: RootState) => state.projects.currentProject
 	);
 
 	useEffect(() => {
+		teamCheck();
+	}, []);
+
+	useEffect(() => {
+		teamCheck();
+	}, [hasTeam]);
+
+	const teamCheck = () => {
 		if (hasTeam.admins?.length !== 0 || hasTeam.teams?.length !== 0) {
 			setSoloOrTeam(true);
-		} else {
-			setSoloOrTeam(false);
+			return;
 		}
-	}, [hasTeam]);
+		setSoloOrTeam(false);
+	};
+
+	console.log(hasTeam);
 
 	return (
 		<>

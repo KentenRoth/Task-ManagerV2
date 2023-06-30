@@ -91,7 +91,6 @@ const SingleTicket = (props: IProps) => {
 			<div onClick={showHideTicketDetails}>
 				<div className="ticket_top-copy">
 					<h2>{title}</h2>
-					<p>{summary}</p>
 				</div>
 				{showTicketDetails === true && (
 					<Description description={description} />

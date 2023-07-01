@@ -2,6 +2,8 @@ import TeamTickets from '../Pages/teamTickets';
 import { RootState } from '../app/store';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+import { Draggable } from 'react-beautiful-dnd';
+import Columns from './columns';
 
 interface Tickets {
 	_id: string;
@@ -18,69 +20,59 @@ interface Tickets {
 	currentFocus: boolean;
 }
 
+interface AllColumns {
+	title: string;
+	tickets: Tickets[];
+}
+
 const TeamBoard = () => {
 	const allTickets = useSelector((state: RootState) => state.tickets);
 	const [tickets, setTickets] = useState<Tickets[]>([]);
-	const [completed, setCompleted] = useState<Tickets[]>([]);
+	const [columns, setColumns] = useState<AllColumns[]>([]);
 
 	useEffect(() => {
 		sortTickets(allTickets.tickets);
 	}, [allTickets]);
 
-	const sortTickets = (array: Tickets[]) => {
-		console.log(allTickets);
-		const ticketGroups: {
-			[key: string]: Tickets[];
-		} = {
-			currentFocus: [],
-			unassigned: [],
-			assigned: [],
-			completed: [],
-		};
+	let sortTickets = (array: Tickets[]) => {
+		let completed: Tickets[] = [];
+		let currentFocus: Tickets[] = [];
+		let assigned: Tickets[] = [];
+		let unassigned: Tickets[] = [];
 
 		array.forEach((ticket) => {
 			if (ticket.completed) {
-				return ticketGroups.completed.push(ticket);
+				return completed.push(ticket);
 			}
 			if (ticket.currentFocus) {
-				return ticketGroups.currentFocus.push(ticket);
+				return currentFocus.push(ticket);
 			}
 			if (ticket.assigned) {
-				return ticketGroups.assigned.push(ticket);
+				return assigned.push(ticket);
 			}
-			return ticketGroups.unassigned.push(ticket);
+			return unassigned.push(ticket);
 		});
 
-		setTickets([
-			...ticketGroups.currentFocus,
-			...ticketGroups.unassigned,
-			...ticketGroups.assigned,
+		setColumns([
+			{ title: 'CurrentFocus', tickets: currentFocus },
+			{ title: 'Assigned', tickets: assigned },
+			{ title: 'Unassigned', tickets: unassigned },
+			{ title: 'Completed', tickets: completed },
 		]);
-		setCompleted(ticketGroups.completed);
 	};
 
 	return (
 		<>
-			<div className="team-current-focus">
-				<TeamTickets
-					tickets={tickets.filter((ticket) => ticket.currentFocus)}
-				/>
-			</div>
-			<div className="team-unassigned">
-				<TeamTickets
-					tickets={tickets.filter(
-						(ticket) => !ticket.currentFocus && !ticket.assigned
-					)}
-				/>
-			</div>
-			<div className="team-assigned">
-				<TeamTickets
-					tickets={tickets.filter((ticket) => ticket.assigned)}
-				/>
-			</div>
-			<div className="team-assigned">
-				<TeamTickets tickets={completed} />
-			</div>
+			{columns.map((column) => {
+				return (
+					<div className="columns_container">
+						<Columns
+							title={column.title}
+							tickets={column.tickets}
+						/>
+					</div>
+				);
+			})}
 		</>
 	);
 };

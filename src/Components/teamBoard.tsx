@@ -27,18 +27,27 @@ interface AllColumns {
 
 const TeamBoard = () => {
 	const allTickets = useSelector((state: RootState) => state.tickets);
-	const [tickets, setTickets] = useState<Tickets[]>([]);
 	const [columns, setColumns] = useState<AllColumns[]>([]);
+	const [isLoaded, setLoaded] = useState<boolean>(false);
 
 	useEffect(() => {
-		setTickets(allTickets.tickets);
+		sortTickets(allTickets.tickets);
 	}, [allTickets]);
 
 	useEffect(() => {
-		sortTickets(tickets);
-	}, [tickets]);
+		if (columns.length === 0) {
+			return;
+		}
+		if (!isLoaded) {
+			return setLoaded(true);
+		}
+		sendingNewTicketOrder();
+	}, [columns]);
 
 	let sortTickets = (array: Tickets[]) => {
+		if (array.length === 0) {
+			return;
+		}
 		let completed: Tickets[] = [];
 		let currentFocus: Tickets[] = [];
 		let assigned: Tickets[] = [];
@@ -76,11 +85,25 @@ const TeamBoard = () => {
 		});
 	};
 
+	let sendingNewTicketOrder = () => {
+		if (columns.length === 0) {
+			return;
+		}
+		let allTicketIds: string[] = [];
+		columns.forEach((column) => {
+			column.tickets.forEach((ticket) => {
+				allTicketIds.push(ticket._id);
+			});
+		});
+
+		console.log(allTicketIds);
+	};
+
 	return (
 		<>
 			{columns.map((column, index) => {
 				return (
-					<div className="columns_container">
+					<div className="columns_container" key={index}>
 						<Columns
 							title={column.title}
 							tickets={column.tickets}

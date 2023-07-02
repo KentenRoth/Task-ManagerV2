@@ -6,7 +6,7 @@ import TeamBoard from '../Components/teamBoard';
 import { useState, useEffect } from 'react';
 
 const TaskManager = () => {
-	const [soloOrTeam, setSoloOrTeam] = useState(Boolean);
+	const [soloOrTeam, setSoloOrTeam] = useState<string>('');
 	const hasTeam = useSelector(
 		(state: RootState) => state.projects.currentProject
 	);
@@ -20,20 +20,30 @@ const TaskManager = () => {
 	}, [hasTeam]);
 
 	const teamCheck = () => {
-		if (hasTeam.admins?.length !== 0 || hasTeam.teams?.length !== 0) {
-			setSoloOrTeam(true);
+		if (JSON.stringify(hasTeam) === '{}') {
 			return;
 		}
-		setSoloOrTeam(false);
+		if (!hasTeam) {
+			console.log('No Project');
+		}
+		if (hasTeam.admins?.length !== 0 || hasTeam.teams?.length !== 0) {
+			setSoloOrTeam('Team');
+			return;
+		}
+		setSoloOrTeam('Solo');
 	};
-
-	console.log(hasTeam);
 
 	return (
 		<>
 			<section className="task-manager">
 				<div className="task-manager_container">
-					{soloOrTeam ? <TeamBoard /> : <SoloBoard />}
+					{soloOrTeam === 'Team' ? (
+						<TeamBoard />
+					) : soloOrTeam === 'Solo' ? (
+						<SoloBoard />
+					) : (
+						<div></div>
+					)}
 				</div>
 			</section>
 		</>

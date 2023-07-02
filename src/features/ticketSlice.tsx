@@ -13,6 +13,7 @@ type Tickets = {
 	completed: boolean;
 	assigned: boolean;
 	currentFocus: boolean;
+	order: number;
 };
 
 type InitialState = {

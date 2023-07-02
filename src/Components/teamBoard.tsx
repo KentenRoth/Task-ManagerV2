@@ -2,6 +2,7 @@ import { RootState } from '../app/store';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import Columns from './columns';
+import axiosProject from '../axios/axiosProject';
 
 interface Tickets {
 	_id: string;
@@ -16,14 +17,13 @@ interface Tickets {
 	completed: boolean;
 	assigned: boolean;
 	currentFocus: boolean;
+	order: number;
 }
 
 interface AllColumns {
 	title: string;
 	tickets: Tickets[];
 }
-
-//TODO update tickets order in redux so the new ticket order is saved.
 
 const TeamBoard = () => {
 	const allTickets = useSelector((state: RootState) => state.tickets);
@@ -66,6 +66,11 @@ const TeamBoard = () => {
 			return unassigned.push(ticket);
 		});
 
+		completed.sort((a, b) => a.order - b.order);
+		currentFocus.sort((a, b) => a.order - b.order);
+		assigned.sort((a, b) => a.order - b.order);
+		unassigned.sort((a, b) => a.order - b.order);
+
 		setColumns([
 			{ title: 'CurrentFocus', tickets: currentFocus },
 			{ title: 'Assigned', tickets: assigned },
@@ -96,7 +101,13 @@ const TeamBoard = () => {
 			});
 		});
 
-		console.log(allTicketIds);
+		axiosProject
+			.patch('/tickets/reorder', {
+				ticketIds: allTicketIds,
+			})
+			.then((response) => {
+				console.log(response);
+			});
 	};
 
 	return (

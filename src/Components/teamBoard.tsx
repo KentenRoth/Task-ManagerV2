@@ -1,8 +1,6 @@
-import TeamTickets from '../Pages/teamTickets';
 import { RootState } from '../app/store';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { Draggable } from 'react-beautiful-dnd';
 import Columns from './columns';
 
 interface Tickets {
@@ -25,14 +23,20 @@ interface AllColumns {
 	tickets: Tickets[];
 }
 
+//TODO update tickets order in redux so the new ticket order is saved.
+
 const TeamBoard = () => {
 	const allTickets = useSelector((state: RootState) => state.tickets);
 	const [tickets, setTickets] = useState<Tickets[]>([]);
 	const [columns, setColumns] = useState<AllColumns[]>([]);
 
 	useEffect(() => {
-		sortTickets(allTickets.tickets);
+		setTickets(allTickets.tickets);
 	}, [allTickets]);
+
+	useEffect(() => {
+		sortTickets(tickets);
+	}, [tickets]);
 
 	let sortTickets = (array: Tickets[]) => {
 		let completed: Tickets[] = [];
@@ -61,14 +65,27 @@ const TeamBoard = () => {
 		]);
 	};
 
+	let afterDrop = (update: Tickets[], column: number) => {
+		setColumns((prevState) => {
+			const updated = [...prevState];
+			updated[column] = {
+				...updated[column],
+				tickets: update,
+			};
+			return updated;
+		});
+	};
+
 	return (
 		<>
-			{columns.map((column) => {
+			{columns.map((column, index) => {
 				return (
 					<div className="columns_container">
 						<Columns
 							title={column.title}
 							tickets={column.tickets}
+							afterDrop={afterDrop}
+							index={index}
 						/>
 					</div>
 				);

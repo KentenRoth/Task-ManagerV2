@@ -22,8 +22,10 @@ interface IProps {
 const SoloTickets = (props: IProps) => {
 	return (
 		<>
-			{props.tickets.map((ticket) => {
-				return <Ticket key={ticket._id} ticket={ticket} />;
+			{props.tickets.map((ticket, index) => {
+				return (
+					<Ticket key={ticket._id} ticket={ticket} index={index} />
+				);
 			})}
 		</>
 	);

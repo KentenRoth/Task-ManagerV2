@@ -7,6 +7,8 @@ import { updateProjectTickets } from '../../features/ticketSlice';
 import AssignedTo from './assignedTo';
 import Description from './description';
 
+import { Draggable } from 'react-beautiful-dnd';
+
 interface Ticket {
 	_id: string;
 	title: string;
@@ -24,6 +26,7 @@ interface Ticket {
 
 type IProps = {
 	ticket: Ticket;
+	index: number;
 };
 
 const SingleTicket = (props: IProps) => {
@@ -64,7 +67,6 @@ const SingleTicket = (props: IProps) => {
 
 	const {
 		_id,
-		summary,
 		completed,
 		priority,
 		title,
@@ -83,21 +85,39 @@ const SingleTicket = (props: IProps) => {
 	}
 
 	return (
-		<div className={`ticket ${color}`} id={_id}>
-			<div className="ticket_edit">
-				<button onClick={showEdit}>Edit</button>
-				<button onClick={ticketCompletedClicked}>Completed</button>
-			</div>
-			<div onClick={showHideTicketDetails}>
-				<div className="ticket_top-copy">
-					<h2>{title}</h2>
+		<Draggable
+			key={props.ticket._id}
+			draggableId={props.ticket._id}
+			index={props.index}
+		>
+			{(provided) => (
+				<div
+					ref={provided.innerRef}
+					{...provided.draggableProps}
+					{...provided.dragHandleProps}
+				>
+					<div className={`ticket ${color}`} id={_id}>
+						<div className="ticket_edit">
+							<button onClick={showEdit}>Edit</button>
+							<button onClick={ticketCompletedClicked}>
+								Completed
+							</button>
+						</div>
+						<div onClick={showHideTicketDetails}>
+							<div className="ticket_top-copy">
+								<h2>{title}</h2>
+							</div>
+							{showTicketDetails === true && (
+								<Description description={description} />
+							)}
+							{assignedTo && (
+								<AssignedTo assignedTo={assignedTo} />
+							)}
+						</div>
+					</div>
 				</div>
-				{showTicketDetails === true && (
-					<Description description={description} />
-				)}
-				{assignedTo && <AssignedTo assignedTo={assignedTo} />}
-			</div>
-		</div>
+			)}
+		</Draggable>
 	);
 };
 

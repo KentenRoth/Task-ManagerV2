@@ -1,10 +1,12 @@
 import React from 'react';
-import TeamTickets from '../Pages/teamTickets';
 import Ticket from '../Components/Tickets/ticket';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 interface IProps {
 	title: string;
 	tickets: Tickets[];
+	index: number;
+	afterDrop(update: Tickets[], column: number): void;
 }
 
 interface Tickets {
@@ -23,15 +25,42 @@ interface Tickets {
 }
 
 const Columns = (props: IProps) => {
+	let handleOnDragEnd = (update: any) => {
+		if (!update.destination) return;
+
+		const tickets = Array.from(props.tickets);
+		const [newOrder] = tickets.splice(update.source.index, 1);
+		tickets.splice(update.destination.index, 0, newOrder);
+		props.afterDrop(tickets, props.index);
+	};
+
 	return (
 		<>
 			<div>
 				<h2 style={{ color: 'white' }}>{props.title}</h2>
 			</div>
 			<div>
-				{props.tickets.map((ticket) => {
-					return <Ticket key={ticket._id} ticket={ticket} />;
-				})}
+				<DragDropContext onDragEnd={handleOnDragEnd}>
+					<Droppable droppableId="tickets">
+						{(provided) => (
+							<div
+								{...provided.droppableProps}
+								ref={provided.innerRef}
+							>
+								{props.tickets.map((ticket, index) => {
+									return (
+										<Ticket
+											key={ticket._id}
+											ticket={ticket}
+											index={index}
+										/>
+									);
+								})}
+								{provided.placeholder}
+							</div>
+						)}
+					</Droppable>
+				</DragDropContext>
 			</div>
 		</>
 	);

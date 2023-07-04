@@ -1,0 +1,54 @@
+.checkboxContainer
+    display: flex
+    align-items: center
+    justify-content: flex-end
+    position: relative
+    padding-right: 25px
+    font-size: 16px
+    color: $dark-gray
+    -webkit-user-select: none
+    -moz-user-select: none
+    -ms-user-select: none
+    user-select: none
+    span
+        cursor: pointer
+
+.checkboxContainer input
+    position: absolute
+    opacity: 0
+    height: 0
+    width: 0
+
+.checkmark
+    position: absolute
+    right: 0
+    height: 16px
+    width: 16px
+    background-color: $mid-gray
+    border: 1px solid $mid-gray
+    border-radius: 5px
+
+.checkboxContainer:hover input ~ .checkmark
+    background-color: $mid-gray
+
+.checkboxContainer input:checked ~ .checkmark
+    background-color: $mid-gray
+
+.checkmark:after
+    content: ""
+    position: absolute
+    display: none
+
+.checkboxContainer input:checked ~ .checkmark:after
+    display: block
+
+.checkboxContainer .checkmark:after
+    left: 5px
+    top: 1px
+    width: 5px
+    height: 10px
+    border: solid $completed
+    border-width: 0 2px 2px 0
+    -webkit-transform: rotate(45deg)
+    -ms-transform: rotate(45deg)
+    transform: rotate(45deg)

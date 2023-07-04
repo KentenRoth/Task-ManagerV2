@@ -46,7 +46,7 @@ const SingleTicket = (props: IProps) => {
 		setIsTicketCompleted(props.ticket.completed);
 	}, [props.ticket.completed]);
 
-	const ticketCompletedClicked = (e: MouseEvent<HTMLButtonElement>) => {
+	const ticketCompletedClicked = (e: React.ChangeEvent<HTMLElement>) => {
 		const parent = e.target as HTMLInputElement;
 		setIsTicketCompleted((current) => !current);
 		axiosProject
@@ -61,7 +61,6 @@ const SingleTicket = (props: IProps) => {
 	};
 
 	const showEdit = () => {
-		console.log('Edit');
 		setShowEditDetails((current) => !current);
 	};
 
@@ -97,11 +96,16 @@ const SingleTicket = (props: IProps) => {
 					{...provided.dragHandleProps}
 				>
 					<div className={`ticket ${color}`} id={_id}>
-						<div className="ticket_edit">
-							<button onClick={showEdit}>Edit</button>
-							<button onClick={ticketCompletedClicked}>
-								Completed
-							</button>
+						<div className={'clientRow__client'}>
+							<label className={'checkboxContainer'}>
+								<input
+									type={'checkbox'}
+									onChange={ticketCompletedClicked}
+									checked={props.ticket.completed}
+								/>
+								Completed?
+								<span className={'checkmark'}></span>
+							</label>
 						</div>
 						<div onClick={showHideTicketDetails}>
 							<div className="ticket_top-copy">

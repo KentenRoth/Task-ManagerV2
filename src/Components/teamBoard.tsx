@@ -114,7 +114,7 @@ const TeamBoard = () => {
 		<>
 			{columns.map((column, index) => {
 				return (
-					<div className="columns_container" key={index}>
+					<div className="columns" key={index}>
 						<Columns
 							title={column.title}
 							tickets={column.tickets}

@@ -36,31 +36,33 @@ const Columns = (props: IProps) => {
 
 	return (
 		<>
-			<div>
-				<h2 style={{ color: 'white' }}>{props.title}</h2>
-			</div>
-			<div>
-				<DragDropContext onDragEnd={handleOnDragEnd}>
-					<Droppable droppableId="tickets">
-						{(provided) => (
-							<div
-								{...provided.droppableProps}
-								ref={provided.innerRef}
-							>
-								{props.tickets.map((ticket, index) => {
-									return (
-										<Ticket
-											key={ticket._id}
-											ticket={ticket}
-											index={index}
-										/>
-									);
-								})}
-								{provided.placeholder}
-							</div>
-						)}
-					</Droppable>
-				</DragDropContext>
+			<div className="column_container">
+				<div className="column_title">
+					<h2>{props.title}</h2>
+				</div>
+				<div>
+					<DragDropContext onDragEnd={handleOnDragEnd}>
+						<Droppable droppableId="tickets">
+							{(provided) => (
+								<div
+									{...provided.droppableProps}
+									ref={provided.innerRef}
+								>
+									{props.tickets.map((ticket, index) => {
+										return (
+											<Ticket
+												key={ticket._id}
+												ticket={ticket}
+												index={index}
+											/>
+										);
+									})}
+									{provided.placeholder}
+								</div>
+							)}
+						</Droppable>
+					</DragDropContext>
+				</div>
 			</div>
 		</>
 	);

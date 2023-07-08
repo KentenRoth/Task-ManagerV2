@@ -25,15 +25,6 @@ interface Tickets {
 }
 
 const Columns = (props: IProps) => {
-	let handleOnDragEnd = (update: any) => {
-		if (!update.destination) return;
-
-		const tickets = Array.from(props.tickets);
-		const [newOrder] = tickets.splice(update.source.index, 1);
-		tickets.splice(update.destination.index, 0, newOrder);
-		props.afterDrop(tickets, props.index);
-	};
-
 	return (
 		<>
 			<div className="column_container">
@@ -41,27 +32,26 @@ const Columns = (props: IProps) => {
 					<h2>{props.title}</h2>
 				</div>
 				<div>
-					<DragDropContext onDragEnd={handleOnDragEnd}>
-						<Droppable droppableId="tickets">
-							{(provided) => (
-								<div
-									{...provided.droppableProps}
-									ref={provided.innerRef}
-								>
-									{props.tickets.map((ticket, index) => {
-										return (
-											<Ticket
-												key={ticket._id}
-												ticket={ticket}
-												index={index}
-											/>
-										);
-									})}
-									{provided.placeholder}
-								</div>
-							)}
-						</Droppable>
-					</DragDropContext>
+					<Droppable droppableId={props.title}>
+						{(provided) => (
+							<div
+								className="droppable-area"
+								{...provided.droppableProps}
+								ref={provided.innerRef}
+							>
+								{props.tickets.map((ticket, index) => {
+									return (
+										<Ticket
+											key={ticket._id}
+											ticket={ticket}
+											index={index}
+										/>
+									);
+								})}
+								{provided.placeholder}
+							</div>
+						)}
+					</Droppable>
 				</div>
 			</div>
 		</>

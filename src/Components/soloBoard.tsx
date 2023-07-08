@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import Columns from './columns';
 import axiosProject from '../axios/axiosProject';
+import { DragDropContext } from 'react-beautiful-dnd';
 
 interface Tickets {
 	_id: string;
@@ -83,7 +84,31 @@ const SoloBoard = () => {
 			};
 			return updated;
 		});
-		console.log(column);
+	};
+
+	let handleOnDragEnd = (update: any) => {
+		const { destination, source } = update;
+		if (!update.destination) return;
+
+		const sourceColumnIndex = columns.findIndex(
+			(column) => column.title === source.droppableId
+		);
+		const destinationColumnIndex = columns.findIndex(
+			(column) => column.title === destination.droppableId
+		);
+
+		const sourceTickets = Array.from(columns[sourceColumnIndex].tickets);
+		const destinationTickets = Array.from(
+			columns[destinationColumnIndex].tickets
+		);
+
+		const [draggedTicket] = sourceTickets.splice(source.index, 1);
+		destinationTickets.splice(destination.index, 0, draggedTicket);
+
+		const updatedColumns = [...columns];
+		updatedColumns[sourceColumnIndex].tickets = sourceTickets;
+		updatedColumns[destinationColumnIndex].tickets = destinationTickets;
+		setColumns(updatedColumns);
 	};
 
 	let sendingNewTicketOrder = () => {
@@ -108,18 +133,20 @@ const SoloBoard = () => {
 
 	return (
 		<>
-			{columns.map((column, index) => {
-				return (
-					<div className="column" key={index}>
-						<Columns
-							title={column.title}
-							tickets={column.tickets}
-							afterDrop={afterDrop}
-							index={index}
-						/>
-					</div>
-				);
-			})}
+			<DragDropContext onDragEnd={handleOnDragEnd}>
+				{columns.map((column, index) => {
+					return (
+						<div className="column" key={index}>
+							<Columns
+								title={column.title}
+								tickets={column.tickets}
+								afterDrop={afterDrop}
+								index={index}
+							/>
+						</div>
+					);
+				})}
+			</DragDropContext>
 		</>
 	);
 };

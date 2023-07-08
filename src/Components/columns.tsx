@@ -6,7 +6,6 @@ interface IProps {
 	title: string;
 	tickets: Tickets[];
 	index: number;
-	afterDrop(update: Tickets[], column: number): void;
 }
 
 interface Tickets {

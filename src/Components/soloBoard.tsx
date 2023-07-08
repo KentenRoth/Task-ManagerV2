@@ -1,9 +1,12 @@
-import { RootState } from '../app/store';
+import { AppDispatch, RootState } from '../app/store';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import Columns from './columns';
+import { useDispatch } from 'react-redux';
 import axiosProject from '../axios/axiosProject';
 import { DragDropContext } from 'react-beautiful-dnd';
+
+import Columns from './columns';
+import { updateProjectTickets } from '../features/ticketSlice';
 
 interface Tickets {
 	_id: string;
@@ -30,6 +33,8 @@ const SoloBoard = () => {
 	const allTickets = useSelector((state: RootState) => state.tickets);
 	const [columns, setColumns] = useState<AllColumns[]>([]);
 	const [isLoaded, setLoaded] = useState<boolean>(false);
+
+	const dispatch = useDispatch<AppDispatch>();
 
 	useEffect(() => {
 		sortTickets(allTickets.tickets);
@@ -69,13 +74,13 @@ const SoloBoard = () => {
 		tasks.sort((a, b) => a.order - b.order);
 
 		setColumns([
-			{ title: 'CurrentFocus', tickets: currentFocus },
+			{ title: 'Current Focus', tickets: currentFocus },
 			{ title: 'Tasks', tickets: tasks },
 			{ title: 'Completed', tickets: completed },
 		]);
 	};
 
-	let afterDrop = (update: Tickets[], column: number) => {
+	let sameColumnDrop = (update: Tickets[], column: number) => {
 		setColumns((prevState) => {
 			const updated = [...prevState];
 			updated[column] = {
@@ -93,22 +98,86 @@ const SoloBoard = () => {
 		const sourceColumnIndex = columns.findIndex(
 			(column) => column.title === source.droppableId
 		);
-		const destinationColumnIndex = columns.findIndex(
-			(column) => column.title === destination.droppableId
-		);
 
-		const sourceTickets = Array.from(columns[sourceColumnIndex].tickets);
-		const destinationTickets = Array.from(
-			columns[destinationColumnIndex].tickets
-		);
+		if (destination.droppableId === source.droppableId) {
+			const tickets = Array.from(columns[sourceColumnIndex].tickets);
+			const [newOrder] = tickets.splice(update.source.index, 1);
+			tickets.splice(update.destination.index, 0, newOrder);
+			return sameColumnDrop(tickets, sourceColumnIndex);
+		}
 
-		const [draggedTicket] = sourceTickets.splice(source.index, 1);
-		destinationTickets.splice(destination.index, 0, draggedTicket);
+		if (destination.droppableId === 'Completed') {
+			return ticketCompletedUpdate(update.draggableId, destination.index);
+		}
 
-		const updatedColumns = [...columns];
-		updatedColumns[sourceColumnIndex].tickets = sourceTickets;
-		updatedColumns[destinationColumnIndex].tickets = destinationTickets;
-		setColumns(updatedColumns);
+		if (destination.droppableId === 'Current Focus') {
+			return currentFocusUpdate(update.draggableId, destination.index);
+		}
+
+		return unCompletedTaskUpdate(update.draggableId, destination.index);
+	};
+
+	let unCompletedTaskUpdate = (id: string, index: number) => {
+		columns.forEach((column) => {
+			const ticketIndex = column.tickets.findIndex(
+				(ticket) => ticket._id === id
+			);
+			if (ticketIndex !== -1) {
+				const updatedTicket = {
+					...column.tickets[ticketIndex],
+					completed: false,
+					currentFocus: false,
+					order: index,
+				};
+				updateTicketOnServer(updatedTicket, index);
+			}
+		});
+	};
+
+	let ticketCompletedUpdate = (id: string, index: number) => {
+		columns.forEach((column) => {
+			const ticketIndex = column.tickets.findIndex(
+				(ticket) => ticket._id === id
+			);
+			if (ticketIndex !== -1) {
+				const updatedTicket = {
+					...column.tickets[ticketIndex],
+					completed: true,
+					currentFocus: false,
+					order: index,
+				};
+				updateTicketOnServer(updatedTicket, index);
+			}
+		});
+	};
+
+	let currentFocusUpdate = (id: string, index: number) => {
+		columns.forEach((column) => {
+			const ticketIndex = column.tickets.findIndex(
+				(ticket) => ticket._id === id
+			);
+			if (ticketIndex !== -1) {
+				const updatedTicket = {
+					...column.tickets[ticketIndex],
+					completed: false,
+					currentFocus: true,
+					order: index,
+				};
+				updateTicketOnServer(updatedTicket, index);
+			}
+		});
+	};
+
+	let updateTicketOnServer = (ticket: Tickets, index: number) => {
+		const { _id, completed, currentFocus } = ticket;
+		console.log(completed, currentFocus, index);
+		axiosProject
+			.patch(`/tickets/${_id}`, {
+				completed,
+				currentFocus,
+				order: index,
+			})
+			.then((res) => dispatch(updateProjectTickets(res.data)));
 	};
 
 	let sendingNewTicketOrder = () => {
@@ -140,7 +209,6 @@ const SoloBoard = () => {
 							<Columns
 								title={column.title}
 								tickets={column.tickets}
-								afterDrop={afterDrop}
 								index={index}
 							/>
 						</div>

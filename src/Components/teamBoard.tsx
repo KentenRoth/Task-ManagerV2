@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import Columns from './columns';
 import axiosProject from '../axios/axiosProject';
+import { DragDropContext } from 'react-beautiful-dnd';
 
 interface Tickets {
 	_id: string;
@@ -79,7 +80,7 @@ const TeamBoard = () => {
 		]);
 	};
 
-	let afterDrop = (update: Tickets[], column: number) => {
+	let sameColumnDrop = (update: Tickets[], column: number) => {
 		setColumns((prevState) => {
 			const updated = [...prevState];
 			updated[column] = {
@@ -88,6 +89,10 @@ const TeamBoard = () => {
 			};
 			return updated;
 		});
+	};
+
+	let handleOnDragEnd = (update: any) => {
+		console.log(update);
 	};
 
 	let sendingNewTicketOrder = () => {
@@ -112,18 +117,19 @@ const TeamBoard = () => {
 
 	return (
 		<>
-			{columns.map((column, index) => {
-				return (
-					<div className="columns" key={index}>
-						<Columns
-							title={column.title}
-							tickets={column.tickets}
-							afterDrop={afterDrop}
-							index={index}
-						/>
-					</div>
-				);
-			})}
+			<DragDropContext onDragEnd={handleOnDragEnd}>
+				{columns.map((column, index) => {
+					return (
+						<div className="columns" key={index}>
+							<Columns
+								title={column.title}
+								tickets={column.tickets}
+								index={index}
+							/>
+						</div>
+					);
+				})}
+			</DragDropContext>
 		</>
 	);
 };

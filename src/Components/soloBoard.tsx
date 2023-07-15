@@ -170,7 +170,6 @@ const SoloBoard = () => {
 
 	let updateTicketOnServer = (ticket: Tickets, index: number) => {
 		const { _id, completed, currentFocus } = ticket;
-		console.log(completed, currentFocus, index);
 		axiosProject
 			.patch(`/tickets/${_id}`, {
 				completed,
@@ -190,14 +189,9 @@ const SoloBoard = () => {
 				allTicketIds.push(ticket._id);
 			});
 		});
-
-		axiosProject
-			.patch('/tickets/reorder', {
-				ticketIds: allTicketIds,
-			})
-			.then((response) => {
-				console.log(response);
-			});
+		axiosProject.patch('/tickets/reorder', {
+			ticketIds: allTicketIds,
+		});
 	};
 
 	return (

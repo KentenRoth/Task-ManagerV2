@@ -26,33 +26,52 @@ interface Tickets {
 const Columns = (props: IProps) => {
 	return (
 		<>
-			<div className="column_container">
-				<div className="column_title">
-					<h2>{props.title}</h2>
-				</div>
-				<div>
-					<Droppable droppableId={props.title}>
-						{(provided) => (
-							<div
-								className="droppable-area"
-								{...provided.droppableProps}
-								ref={provided.innerRef}
-							>
-								{props.tickets.map((ticket, index) => {
-									return (
-										<Ticket
-											key={ticket._id}
-											ticket={ticket}
-											index={index}
-										/>
-									);
-								})}
-								{provided.placeholder}
+			<Draggable
+				key={props.title}
+				draggableId={props.title}
+				index={props.index}
+			>
+				{(provided) => (
+					<div
+						ref={provided.innerRef}
+						{...provided.draggableProps}
+						{...provided.dragHandleProps}
+					>
+						<div className="column_container">
+							<div className="column_title">
+								<h2>{props.title}</h2>
 							</div>
-						)}
-					</Droppable>
-				</div>
-			</div>
+							<div>
+								<Droppable
+									droppableId={props.title}
+									type="Ticket"
+								>
+									{(provided) => (
+										<div
+											className="droppable-area"
+											{...provided.droppableProps}
+											ref={provided.innerRef}
+										>
+											{props.tickets.map(
+												(ticket, index) => {
+													return (
+														<Ticket
+															key={ticket._id}
+															ticket={ticket}
+															index={index}
+														/>
+													);
+												}
+											)}
+											{provided.placeholder}
+										</div>
+									)}
+								</Droppable>
+							</div>
+						</div>
+					</div>
+				)}
+			</Draggable>
 		</>
 	);
 };

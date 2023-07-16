@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import axiosProject from '../axios/axiosProject';
-import { DragDropContext } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
 import Columns from './columns';
 import { updateProjectTickets } from '../features/ticketSlice';
@@ -92,6 +92,18 @@ const SoloBoard = () => {
 	};
 
 	let handleOnDragEnd = (update: any) => {
+		if (update.type === 'Ticket') {
+			return ticketDragEnd(update);
+		}
+		return columnDragEnd(update);
+	};
+
+	let columnDragEnd = (update: any) => {
+		console.log(update);
+		if (!update.destination) return;
+	};
+
+	let ticketDragEnd = (update: any) => {
 		const { destination, source } = update;
 		if (!update.destination) return;
 
@@ -197,17 +209,28 @@ const SoloBoard = () => {
 	return (
 		<>
 			<DragDropContext onDragEnd={handleOnDragEnd}>
-				{columns.map((column, index) => {
-					return (
-						<div className="column" key={index}>
-							<Columns
-								title={column.title}
-								tickets={column.tickets}
-								index={index}
-							/>
+				<Droppable droppableId={'boardDrop'} type="Column">
+					{(provided) => (
+						<div
+							className="task-manager_container"
+							{...provided.droppableProps}
+							ref={provided.innerRef}
+						>
+							{columns.map((column, index) => {
+								return (
+									<div className="column" key={index}>
+										<Columns
+											title={column.title}
+											tickets={column.tickets}
+											index={index}
+										/>
+									</div>
+								);
+							})}
+							{provided.placeholder}
 						</div>
-					);
-				})}
+					)}
+				</Droppable>
 			</DragDropContext>
 		</>
 	);

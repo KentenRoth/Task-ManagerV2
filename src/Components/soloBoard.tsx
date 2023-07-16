@@ -209,7 +209,12 @@ const SoloBoard = () => {
 	return (
 		<>
 			<DragDropContext onDragEnd={handleOnDragEnd}>
-				<Droppable droppableId={'boardDrop'} type="Column">
+				<Droppable
+					droppableId={'boardDrop'}
+					type="Column"
+					direction="horizontal"
+					ignoreContainerClipping={true}
+				>
 					{(provided) => (
 						<div
 							className="task-manager_container"
@@ -218,13 +223,12 @@ const SoloBoard = () => {
 						>
 							{columns.map((column, index) => {
 								return (
-									<div className="column" key={index}>
-										<Columns
-											title={column.title}
-											tickets={column.tickets}
-											index={index}
-										/>
-									</div>
+									<Columns
+										title={column.title}
+										tickets={column.tickets}
+										index={index}
+										key={index}
+									/>
 								);
 							})}
 							{provided.placeholder}

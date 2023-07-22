@@ -9,7 +9,14 @@ type Projects = {
 	admins?: Teammember[];
 	teams?: Teammember[];
 	tokens: Array<Tokens>;
+	columns?: Array<Columns>;
 };
+
+interface Columns {
+	_id: string;
+	title: string;
+	order: number;
+}
 
 interface CurrentProject {
 	_id: string;
@@ -18,6 +25,7 @@ interface CurrentProject {
 	owner: string;
 	admins?: Teammember[];
 	teams?: Teammember[];
+	columns?: Array<Columns>;
 }
 
 interface Tokens {

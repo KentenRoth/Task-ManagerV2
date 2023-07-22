@@ -14,6 +14,7 @@ interface IProps {
 		_id: string;
 		tokens: Tokens[];
 		owner: string;
+		columns?: Columns[];
 	}[];
 	show(): void;
 }
@@ -26,11 +27,18 @@ type Project = {
 	_id: string;
 	tokens: Tokens[];
 	owner: string;
+	columns?: Columns[];
 };
 
 interface Teammember {
 	_id: string;
 	name: string;
+}
+
+interface Columns {
+	_id: string;
+	title: string;
+	order: number;
 }
 
 interface Tokens {
@@ -57,7 +65,8 @@ const SelectProject = (props: IProps) => {
 	};
 
 	const handleSubmit = () => {
-		const { _id, created, owner, title, teams, admins, tokens } = project;
+		const { _id, created, owner, title, teams, admins, tokens, columns } =
+			project;
 		dispatch(
 			currentProject({
 				_id,
@@ -67,6 +76,7 @@ const SelectProject = (props: IProps) => {
 				teams,
 				admins,
 				tokens,
+				columns,
 			})
 		);
 		axiosProject.get('/tickets').then((res) => {

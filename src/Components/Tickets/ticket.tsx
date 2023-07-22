@@ -55,7 +55,6 @@ const SingleTicket = (props: IProps) => {
 			})
 			.then((res) => {
 				if (res.status === 200) {
-					console.log(res.data);
 					dispatch(updateProjectTickets(res.data));
 				}
 			});

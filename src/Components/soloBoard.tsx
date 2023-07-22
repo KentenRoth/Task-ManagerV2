@@ -4,9 +4,14 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import axiosProject from '../axios/axiosProject';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import axiosUser from '../axios/axiosUser';
 
 import Columns from './columns';
 import { updateProjectTickets } from '../features/ticketSlice';
+
+interface IProps {
+	id: string;
+}
 
 interface Tickets {
 	_id: string;
@@ -27,12 +32,18 @@ interface Tickets {
 interface AllColumns {
 	title: string;
 	tickets: Tickets[];
+	order?: number;
 }
 
-const SoloBoard = () => {
+const SoloBoard = (props: IProps) => {
 	const allTickets = useSelector((state: RootState) => state.tickets);
+	const allColumns = useSelector(
+		(state: RootState) => state.projects.currentProject.columns
+	);
 	const [columns, setColumns] = useState<AllColumns[]>([]);
 	const [isLoaded, setLoaded] = useState<boolean>(false);
+	const [columnsUpdate, setColumnsUpdate] = useState<boolean>(false);
+	const [initialSort, setInitialSort] = useState<boolean>(true);
 
 	const dispatch = useDispatch<AppDispatch>();
 
@@ -47,37 +58,92 @@ const SoloBoard = () => {
 		if (!isLoaded) {
 			return setLoaded(true);
 		}
-
 		sendingNewTicketOrder();
 	}, [columns]);
+
+	useEffect(() => {
+		if (!columnsUpdate) return;
+		sendingColumnOrder();
+	}, [columnsUpdate]);
 
 	let sortTickets = (array: Tickets[]) => {
 		if (array.length === 0) {
 			return;
 		}
-		let completed: Tickets[] = [];
-		let currentFocus: Tickets[] = [];
-		let tasks: Tickets[] = [];
-
-		array.forEach((ticket) => {
-			if (ticket.completed) {
-				return completed.push(ticket);
-			}
-			if (ticket.currentFocus) {
-				return currentFocus.push(ticket);
-			}
-			return tasks.push(ticket);
-		});
+		const completed: Tickets[] = array.filter((ticket) => ticket.completed);
+		const currentFocus: Tickets[] = array.filter(
+			(ticket) => ticket.currentFocus
+		);
+		const tasks: Tickets[] = array.filter(
+			(ticket) => !ticket.completed && !ticket.currentFocus
+		);
 
 		completed.sort((a, b) => a.order - b.order);
 		currentFocus.sort((a, b) => a.order - b.order);
 		tasks.sort((a, b) => a.order - b.order);
 
-		setColumns([
-			{ title: 'Current Focus', tickets: currentFocus },
-			{ title: 'Tasks', tickets: tasks },
-			{ title: 'Completed', tickets: completed },
-		]);
+		if (initialSort) {
+			if (!allColumns) {
+				setInitialSort(false);
+				return setColumns([
+					{ title: 'Current Focus', tickets: currentFocus, order: 0 },
+					{ title: 'Tasks', tickets: tasks, order: 1 },
+					{ title: 'Completed', tickets: completed, order: 2 },
+				]);
+			} else {
+				let columnArray: AllColumns[] = [];
+				allColumns.map((column) => {
+					if (column.title === 'Current Focus') {
+						columnArray.push({
+							title: column.title,
+							order: column.order,
+							tickets: currentFocus,
+						});
+					}
+					if (column.title === 'Tasks') {
+						columnArray.push({
+							title: column.title,
+							order: column.order,
+							tickets: tasks,
+						});
+					}
+					if (column.title === 'Completed') {
+						columnArray.push({
+							title: column.title,
+							order: column.order,
+							tickets: completed,
+						});
+					}
+				});
+				setColumns(columnArray);
+				setInitialSort(false);
+			}
+		}
+		let columnArray: AllColumns[] = [];
+		columns.map((column) => {
+			if (column.title === 'Current Focus') {
+				columnArray.push({
+					title: column.title,
+					order: column.order,
+					tickets: currentFocus,
+				});
+			}
+			if (column.title === 'Tasks') {
+				columnArray.push({
+					title: column.title,
+					order: column.order,
+					tickets: tasks,
+				});
+			}
+			if (column.title === 'Completed') {
+				columnArray.push({
+					title: column.title,
+					order: column.order,
+					tickets: completed,
+				});
+			}
+		});
+		setColumns(columnArray);
 	};
 
 	let sameColumnDrop = (update: Tickets[], column: number) => {
@@ -99,8 +165,16 @@ const SoloBoard = () => {
 	};
 
 	let columnDragEnd = (update: any) => {
-		console.log(update);
 		if (!update.destination) return;
+		let finalOrder: AllColumns[] = [];
+		let columnOrder = Array.from(columns);
+		const [newOrder] = columnOrder.splice(update.source.index, 1);
+		columnOrder.splice(update.destination.index, 0, newOrder);
+		columnOrder.map((column, index) => {
+			finalOrder.push({ ...column, order: index });
+		});
+		setColumns(finalOrder);
+		setColumnsUpdate(true);
 	};
 
 	let ticketDragEnd = (update: any) => {
@@ -204,6 +278,24 @@ const SoloBoard = () => {
 		axiosProject.patch('/tickets/reorder', {
 			ticketIds: allTicketIds,
 		});
+	};
+
+	let sendingColumnOrder = () => {
+		if (columns.length === 0) return;
+		let columnsData: any = [];
+		columns.map((column) => {
+			columnsData.push({ title: column.title, order: column.order });
+		});
+
+		axiosUser
+			.patch(`/projects/${props.id}`, {
+				columns: columnsData,
+			})
+			.then((response) => {
+				if (response.status === 200) {
+					setColumnsUpdate(false);
+				}
+			});
 	};
 
 	return (

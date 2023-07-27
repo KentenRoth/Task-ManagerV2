@@ -84,12 +84,12 @@ const SoloBoard = (props: IProps) => {
 
 		if (initialSort) {
 			if (!allColumns) {
-				setInitialSort(false);
-				return setColumns([
+				setColumns([
 					{ title: 'Current Focus', tickets: currentFocus, order: 0 },
 					{ title: 'Tasks', tickets: tasks, order: 1 },
 					{ title: 'Completed', tickets: completed, order: 2 },
 				]);
+				return setInitialSort(false);
 			} else {
 				let columnArray: AllColumns[] = [];
 				allColumns.map((column) => {
@@ -116,7 +116,7 @@ const SoloBoard = (props: IProps) => {
 					}
 				});
 				setColumns(columnArray);
-				setInitialSort(false);
+				return setInitialSort(false);
 			}
 		}
 		let columnArray: AllColumns[] = [];

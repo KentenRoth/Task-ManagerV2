@@ -1,5 +1,5 @@
-import { RootState } from '../app/store';
-import { useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../app/store';
+import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import Columns from './columns';
 import axiosProject from '../axios/axiosProject';
@@ -30,6 +30,10 @@ const TeamBoard = () => {
 	const allTickets = useSelector((state: RootState) => state.tickets);
 	const [columns, setColumns] = useState<AllColumns[]>([]);
 	const [isLoaded, setLoaded] = useState<boolean>(false);
+	const [columnsUpdate, setColumnsUpdate] = useState<boolean>(false);
+	const [initialSort, setInitialSort] = useState<boolean>(true);
+
+	const dispatch = useDispatch<AppDispatch>();
 
 	useEffect(() => {
 		sortTickets(allTickets.tickets);
@@ -45,14 +49,25 @@ const TeamBoard = () => {
 		sendingNewTicketOrder();
 	}, [columns]);
 
+	useEffect(() => {
+		if (!columnsUpdate) return;
+	}, [columnsUpdate]);
+
 	let sortTickets = (array: Tickets[]) => {
 		if (array.length === 0) {
 			return;
 		}
-		let completed: Tickets[] = [];
-		let currentFocus: Tickets[] = [];
-		let assigned: Tickets[] = [];
-		let unassigned: Tickets[] = [];
+
+		const completed: Tickets[] = array.filter((ticket) => ticket.completed);
+		const assigned: Tickets[] = array.filter(
+			(ticket) => ticket.assigned && !ticket.currentFocus
+		);
+		const unassigned: Tickets[] = array.filter(
+			(ticket) => !ticket.assigned
+		);
+		const currentFocus: Tickets[] = array.filter(
+			(ticket) => ticket.currentFocus
+		);
 
 		array.forEach((ticket) => {
 			if (ticket.completed) {

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Columns from './columns';
 import axiosProject from '../axios/axiosProject';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { updateProjectTickets } from '../features/ticketSlice';
 
 interface Tickets {
 	_id: string;
@@ -60,13 +61,15 @@ const TeamBoard = () => {
 
 		const completed: Tickets[] = array.filter((ticket) => ticket.completed);
 		const assigned: Tickets[] = array.filter(
-			(ticket) => ticket.assigned && !ticket.currentFocus
+			(ticket) =>
+				ticket.assigned && !ticket.currentFocus && !ticket.completed
 		);
 		const unassigned: Tickets[] = array.filter(
-			(ticket) => !ticket.assigned
+			(ticket) =>
+				!ticket.assigned && !ticket.completed && !ticket.currentFocus
 		);
 		const currentFocus: Tickets[] = array.filter(
-			(ticket) => ticket.currentFocus
+			(ticket) => ticket.currentFocus && !ticket.completed
 		);
 
 		completed.sort((a, b) => a.order - b.order);
@@ -75,7 +78,7 @@ const TeamBoard = () => {
 		unassigned.sort((a, b) => a.order - b.order);
 
 		setColumns([
-			{ title: 'CurrentFocus', tickets: currentFocus },
+			{ title: 'Current Focus', tickets: currentFocus },
 			{ title: 'Assigned', tickets: assigned },
 			{ title: 'Unassigned', tickets: unassigned },
 			{ title: 'Completed', tickets: completed },
@@ -104,6 +107,8 @@ const TeamBoard = () => {
 		const { destination, source } = update;
 		if (!update.destination) return;
 
+		console.log(update);
+
 		const sourceColumnIndex = columns.findIndex(
 			(column) => column.title === source.droppableId
 		);
@@ -116,11 +121,11 @@ const TeamBoard = () => {
 		}
 
 		if (destination.droppableId === 'Completed') {
-			return console.log('Completed Function here');
+			return ticketCompletedUpdate(update.draggableId, destination.index);
 		}
 
 		if (destination.droppableId === 'Current Focus') {
-			return console.log('Current Focus Function here');
+			return currentFocusUpdate(update.draggableId, destination.index);
 		}
 
 		if (destination.droppableId === 'Assigned') {
@@ -128,6 +133,51 @@ const TeamBoard = () => {
 		}
 
 		return console.log('unAssigned Function here');
+	};
+
+	let ticketCompletedUpdate = (id: string, index: number) => {
+		columns.forEach((column) => {
+			const ticketIndex = column.tickets.findIndex(
+				(ticket) => ticket._id === id
+			);
+			if (ticketIndex !== -1) {
+				const updatedTicket = {
+					...column.tickets[ticketIndex],
+					completed: true,
+					currentFocus: false,
+					order: index,
+				};
+				updateTicketOnServer(updatedTicket, index);
+			}
+		});
+	};
+
+	let currentFocusUpdate = (id: string, index: number) => {
+		columns.forEach((column) => {
+			const ticketIndex = column.tickets.findIndex(
+				(ticket) => ticket._id === id
+			);
+			if (ticketIndex !== -1) {
+				const updatedTicket = {
+					...column.tickets[ticketIndex],
+					completed: false,
+					currentFocus: true,
+					order: index,
+				};
+				updateTicketOnServer(updatedTicket, index);
+			}
+		});
+	};
+
+	let updateTicketOnServer = (ticket: Tickets, index: number) => {
+		const { _id, completed, currentFocus } = ticket;
+		axiosProject
+			.patch(`/tickets/${_id}`, {
+				completed,
+				currentFocus,
+				order: index,
+			})
+			.then((res) => dispatch(updateProjectTickets(res.data)));
 	};
 
 	let sendingNewTicketOrder = () => {

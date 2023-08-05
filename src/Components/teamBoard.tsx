@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import Columns from './columns';
 import axiosProject from '../axios/axiosProject';
-import { DragDropContext } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
 interface Tickets {
 	_id: string;
@@ -69,19 +69,6 @@ const TeamBoard = () => {
 			(ticket) => ticket.currentFocus
 		);
 
-		array.forEach((ticket) => {
-			if (ticket.completed) {
-				return completed.push(ticket);
-			}
-			if (ticket.currentFocus) {
-				return currentFocus.push(ticket);
-			}
-			if (ticket.assigned) {
-				return assigned.push(ticket);
-			}
-			return unassigned.push(ticket);
-		});
-
 		completed.sort((a, b) => a.order - b.order);
 		currentFocus.sort((a, b) => a.order - b.order);
 		assigned.sort((a, b) => a.order - b.order);
@@ -107,7 +94,40 @@ const TeamBoard = () => {
 	};
 
 	let handleOnDragEnd = (update: any) => {
+		if (update.type === 'Ticket') {
+			return ticketDragEnd(update);
+		}
 		console.log(update);
+	};
+
+	let ticketDragEnd = (update: any) => {
+		const { destination, source } = update;
+		if (!update.destination) return;
+
+		const sourceColumnIndex = columns.findIndex(
+			(column) => column.title === source.droppableId
+		);
+
+		if (destination.droppableId === source.droppableId) {
+			const tickets = Array.from(columns[sourceColumnIndex].tickets);
+			const [newOrder] = tickets.splice(update.source.index, 1);
+			tickets.splice(update.destination.index, 0, newOrder);
+			return sameColumnDrop(tickets, sourceColumnIndex);
+		}
+
+		if (destination.droppableId === 'Completed') {
+			return console.log('Completed Function here');
+		}
+
+		if (destination.droppableId === 'Current Focus') {
+			return console.log('Current Focus Function here');
+		}
+
+		if (destination.droppableId === 'Assigned') {
+			return console.log('Assigned Function here');
+		}
+
+		return console.log('unAssigned Function here');
 	};
 
 	let sendingNewTicketOrder = () => {
@@ -133,17 +153,33 @@ const TeamBoard = () => {
 	return (
 		<>
 			<DragDropContext onDragEnd={handleOnDragEnd}>
-				{columns.map((column, index) => {
-					return (
-						<div className="columns" key={index}>
-							<Columns
-								title={column.title}
-								tickets={column.tickets}
-								index={index}
-							/>
+				<Droppable
+					droppableId={'boardDrop'}
+					type="Column"
+					direction="horizontal"
+					ignoreContainerClipping={true}
+				>
+					{(provided) => (
+						<div
+							className="task-manager_container"
+							{...provided.droppableProps}
+							ref={provided.innerRef}
+						>
+							{columns.map((column, index) => {
+								return (
+									<div className="columns" key={index}>
+										<Columns
+											title={column.title}
+											tickets={column.tickets}
+											index={index}
+										/>
+									</div>
+								);
+							})}
+							{provided.placeholder}
 						</div>
-					);
-				})}
+					)}
+				</Droppable>
 			</DragDropContext>
 		</>
 	);

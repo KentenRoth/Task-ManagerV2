@@ -132,7 +132,7 @@ const TeamBoard = () => {
 			return console.log('Assigned Function here');
 		}
 
-		return console.log('unAssigned Function here');
+		return unAssignedUpdate(update.draggableId, destination.index);
 	};
 
 	let ticketCompletedUpdate = (id: string, index: number) => {
@@ -162,6 +162,25 @@ const TeamBoard = () => {
 					...column.tickets[ticketIndex],
 					completed: false,
 					currentFocus: true,
+					order: index,
+				};
+				updateTicketOnServer(updatedTicket, index);
+			}
+		});
+	};
+
+	let unAssignedUpdate = (id: string, index: number) => {
+		columns.forEach((column) => {
+			const ticketIndex = column.tickets.findIndex(
+				(ticket) => ticket._id === id
+			);
+			if (ticketIndex !== -1) {
+				const updatedTicket = {
+					...column.tickets[ticketIndex],
+					completed: false,
+					currentFocus: false,
+					assigned: false,
+					assignedTo: '',
 					order: index,
 				};
 				updateTicketOnServer(updatedTicket, index);

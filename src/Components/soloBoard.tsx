@@ -83,7 +83,7 @@ const SoloBoard = (props: IProps) => {
 		tasks.sort((a, b) => a.order - b.order);
 
 		if (initialSort) {
-			if (!allColumns) {
+			if (!allColumns || allColumns.length < 1) {
 				setColumns([
 					{ title: 'Current Focus', tickets: currentFocus, order: 0 },
 					{ title: 'Tasks', tickets: tasks, order: 1 },

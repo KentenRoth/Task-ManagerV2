@@ -3,8 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import Columns from './columns';
 import axiosProject from '../axios/axiosProject';
+import axiosUser from '../axios/axiosUser';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { updateProjectTickets } from '../features/ticketSlice';
+
+interface IProps {
+	id: string;
+}
 
 interface Tickets {
 	_id: string;
@@ -25,10 +30,14 @@ interface Tickets {
 interface AllColumns {
 	title: string;
 	tickets: Tickets[];
+	order?: number;
 }
 
-const TeamBoard = () => {
+const TeamBoard = (props: IProps) => {
 	const allTickets = useSelector((state: RootState) => state.tickets);
+	const allColumns = useSelector(
+		(state: RootState) => state.projects.currentProject.columns
+	);
 	const [columns, setColumns] = useState<AllColumns[]>([]);
 	const [isLoaded, setLoaded] = useState<boolean>(false);
 	const [columnsUpdate, setColumnsUpdate] = useState<boolean>(false);
@@ -52,6 +61,7 @@ const TeamBoard = () => {
 
 	useEffect(() => {
 		if (!columnsUpdate) return;
+		sendingColumnOrder();
 	}, [columnsUpdate]);
 
 	let sortTickets = (array: Tickets[]) => {
@@ -77,12 +87,84 @@ const TeamBoard = () => {
 		assigned.sort((a, b) => a.order - b.order);
 		unassigned.sort((a, b) => a.order - b.order);
 
-		setColumns([
-			{ title: 'Current Focus', tickets: currentFocus },
-			{ title: 'Assigned', tickets: assigned },
-			{ title: 'Unassigned', tickets: unassigned },
-			{ title: 'Completed', tickets: completed },
-		]);
+		if (initialSort) {
+			if (!allColumns || allColumns.length < 1) {
+				setColumns([
+					{ title: 'Current Focus', tickets: currentFocus, order: 0 },
+					{ title: 'Assigned', tickets: assigned, order: 1 },
+					{ title: 'Unassigned', tickets: unassigned, order: 2 },
+					{ title: 'Completed', tickets: completed, order: 3 },
+				]);
+				return setInitialSort(false);
+			} else {
+				let columnArray: AllColumns[] = [];
+				allColumns.map((column) => {
+					if (column.title === 'Current Focus') {
+						columnArray.push({
+							title: column.title,
+							order: column.order,
+							tickets: currentFocus,
+						});
+					}
+					if (column.title === 'Assigned') {
+						columnArray.push({
+							title: column.title,
+							order: column.order,
+							tickets: assigned,
+						});
+					}
+					if (column.title === 'Unassigned') {
+						columnArray.push({
+							title: column.title,
+							order: column.order,
+							tickets: unassigned,
+						});
+					}
+					if (column.title === 'Completed') {
+						columnArray.push({
+							title: column.title,
+							order: column.order,
+							tickets: completed,
+						});
+					}
+				});
+				setColumns(columnArray);
+				return setInitialSort(false);
+			}
+		}
+
+		let columnArray: AllColumns[] = [];
+		columns.map((column) => {
+			if (column.title === 'Current Focus') {
+				columnArray.push({
+					title: column.title,
+					order: column.order,
+					tickets: currentFocus,
+				});
+			}
+			if (column.title === 'Assigned') {
+				columnArray.push({
+					title: column.title,
+					order: column.order,
+					tickets: assigned,
+				});
+			}
+			if (column.title === 'Unassigned') {
+				columnArray.push({
+					title: column.title,
+					order: column.order,
+					tickets: unassigned,
+				});
+			}
+			if (column.title === 'Completed') {
+				columnArray.push({
+					title: column.title,
+					order: column.order,
+					tickets: completed,
+				});
+			}
+		});
+		setColumns(columnArray);
 	};
 
 	let sameColumnDrop = (update: Tickets[], column: number) => {
@@ -100,7 +182,7 @@ const TeamBoard = () => {
 		if (update.type === 'Ticket') {
 			return ticketDragEnd(update);
 		}
-		console.log(update);
+		return columnDragEnd(update);
 	};
 
 	let ticketDragEnd = (update: any) => {
@@ -150,6 +232,19 @@ const TeamBoard = () => {
 				updateTicketOnServer(updatedTicket, index);
 			}
 		});
+	};
+
+	let columnDragEnd = (update: any) => {
+		if (!update.destination) return;
+		let finalOrder: AllColumns[] = [];
+		let columnOrder = Array.from(columns);
+		const [newOrder] = columnOrder.splice(update.source.index, 1);
+		columnOrder.splice(update.destination.index, 0, newOrder);
+		columnOrder.map((column, index) => {
+			finalOrder.push({ ...column, order: index });
+		});
+		setColumns(finalOrder);
+		setColumnsUpdate(true);
 	};
 
 	let currentFocusUpdate = (id: string, index: number) => {
@@ -209,13 +304,29 @@ const TeamBoard = () => {
 				allTicketIds.push(ticket._id);
 			});
 		});
-
 		axiosProject
 			.patch('/tickets/reorder', {
 				ticketIds: allTicketIds,
 			})
 			.then((response) => {
 				console.log(response);
+			});
+	};
+	let sendingColumnOrder = () => {
+		if (columns.length === 0) return;
+		let columnsData: any = [];
+		columns.map((column) => {
+			columnsData.push({ title: column.title, order: column.order });
+		});
+
+		axiosUser
+			.patch(`/projects/${props.id}`, {
+				columns: columnsData,
+			})
+			.then((response) => {
+				if (response.status === 200) {
+					setColumnsUpdate(false);
+				}
 			});
 	};
 
@@ -236,13 +347,12 @@ const TeamBoard = () => {
 						>
 							{columns.map((column, index) => {
 								return (
-									<div className="columns" key={index}>
-										<Columns
-											title={column.title}
-											tickets={column.tickets}
-											index={index}
-										/>
-									</div>
+									<Columns
+										title={column.title}
+										tickets={column.tickets}
+										index={index}
+										key={index}
+									/>
 								);
 							})}
 							{provided.placeholder}

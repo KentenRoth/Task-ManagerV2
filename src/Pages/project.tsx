@@ -38,7 +38,7 @@ const TaskManager = () => {
 			<section className="task-manager">
 				<div className="task-manager_container">
 					{soloOrTeam === 'Team' ? (
-						<TeamBoard />
+						<TeamBoard id={hasTeam._id} />
 					) : soloOrTeam === 'Solo' ? (
 						<SoloBoard id={hasTeam._id} />
 					) : (

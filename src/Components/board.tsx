@@ -8,12 +8,14 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { updateProjectTickets } from '../features/ticketSlice';
 
 import { AllColumns, Tickets } from '../types';
+import { updateProjectOrder } from '../features/projectSlice';
 
 interface IProps {
 	id: string;
+	isSolo: boolean;
 }
 
-const TeamBoard = (props: IProps) => {
+const Board = (props: IProps) => {
 	const allTickets = useSelector((state: RootState) => state.tickets);
 	const allColumns = useSelector(
 		(state: RootState) => state.projects.currentProject.columns
@@ -27,15 +29,21 @@ const TeamBoard = (props: IProps) => {
 
 	useEffect(() => {
 		sortTickets(allTickets.tickets);
-	}, [allTickets]);
+	}, [allTickets, allColumns]);
+
+	useEffect(() => {
+		setInitialSort(true);
+	}, [props.id]);
 
 	useEffect(() => {
 		if (columns.length === 0) {
 			return;
 		}
+
 		if (!isLoaded) {
 			return setLoaded(true);
 		}
+
 		sendingNewTicketOrder();
 	}, [columns]);
 
@@ -50,16 +58,16 @@ const TeamBoard = (props: IProps) => {
 		}
 
 		const completed: Tickets[] = array.filter((ticket) => ticket.completed);
+		const currentFocus: Tickets[] = array.filter(
+			(ticket) => ticket.currentFocus
+		);
 		const assigned: Tickets[] = array.filter(
 			(ticket) =>
-				ticket.assigned && !ticket.currentFocus && !ticket.completed
+				ticket.assigned && !ticket.completed && !ticket.currentFocus
 		);
 		const tasks: Tickets[] = array.filter(
 			(ticket) =>
-				!ticket.assigned && !ticket.completed && !ticket.currentFocus
-		);
-		const currentFocus: Tickets[] = array.filter(
-			(ticket) => ticket.currentFocus && !ticket.completed
+				!ticket.completed && !ticket.currentFocus && !ticket.assigned
 		);
 
 		completed.sort((a, b) => a.order - b.order);
@@ -67,109 +75,81 @@ const TeamBoard = (props: IProps) => {
 		assigned.sort((a, b) => a.order - b.order);
 		tasks.sort((a, b) => a.order - b.order);
 
+		let columnGroup = [
+			{ title: 'Current Focus', tickets: currentFocus, order: 0 },
+			{ title: 'Tasks', tickets: tasks, order: 0 },
+			{ title: 'Completed', tickets: completed, order: 0 },
+			{ title: 'Assigned', tickets: assigned, order: 0 },
+		];
+
+		let columnTickets: { [key: string]: Tickets[] } = {
+			Completed: completed,
+			'Current Focus': currentFocus,
+			Assigned: assigned,
+			Tasks: tasks,
+		};
 		if (initialSort) {
 			if (!allColumns || allColumns.length < 1) {
-				setColumns([
-					{ title: 'Current Focus', tickets: currentFocus, order: 0 },
-					{ title: 'Assigned', tickets: assigned, order: 1 },
-					{ title: 'Tasks', tickets: tasks, order: 2 },
-					{ title: 'Completed', tickets: completed, order: 3 },
-				]);
+				console.log('no columns or columns length under 1');
+				let columnArray: AllColumns[] = [];
+				columnGroup.map((column, i) => {
+					if (props.isSolo && column.title === 'Assigned') {
+						return;
+					}
+					columnArray.push({
+						title: column.title,
+						tickets: column.tickets,
+						order: i,
+					});
+				});
+				setColumns(columnArray);
 				return setInitialSort(false);
 			} else {
 				let columnArray: AllColumns[] = [];
 				allColumns.map((column) => {
-					if (column.title === 'Current Focus') {
-						columnArray.push({
-							title: column.title,
-							order: column.order,
-							tickets: currentFocus,
-						});
+					if (props.isSolo && column.title === 'Assigned') {
+						return;
 					}
-					if (column.title === 'Assigned') {
-						columnArray.push({
-							title: column.title,
-							order: column.order,
-							tickets: assigned,
-						});
-					}
-					if (column.title === 'Tasks') {
-						columnArray.push({
-							title: column.title,
-							order: column.order,
-							tickets: tasks,
-						});
-					}
-					if (column.title === 'Completed') {
-						columnArray.push({
-							title: column.title,
-							order: column.order,
-							tickets: completed,
-						});
-					}
+					columnArray.push({
+						title: column.title,
+						order: column.order,
+						tickets: columnTickets[column.title] || [],
+					});
 				});
 				setColumns(columnArray);
 				return setInitialSort(false);
 			}
 		}
-
 		let columnArray: AllColumns[] = [];
 		columns.map((column) => {
-			if (column.title === 'Current Focus') {
-				columnArray.push({
-					title: column.title,
-					order: column.order,
-					tickets: currentFocus,
-				});
+			if (props.isSolo && column.title === 'Assigned') {
+				return;
 			}
-			if (column.title === 'Assigned') {
-				columnArray.push({
-					title: column.title,
-					order: column.order,
-					tickets: assigned,
-				});
-			}
-			if (column.title === 'Tasks') {
-				columnArray.push({
-					title: column.title,
-					order: column.order,
-					tickets: tasks,
-				});
-			}
-			if (column.title === 'Completed') {
-				columnArray.push({
-					title: column.title,
-					order: column.order,
-					tickets: completed,
-				});
-			}
+			columnArray.push({
+				title: column.title,
+				order: column.order,
+				tickets: columnTickets[column.title] || [],
+			});
 		});
 		setColumns(columnArray);
 	};
 
-	let sameColumnDrop = (update: Tickets[], column: number) => {
-		setColumns((prevState) => {
-			const updated = [...prevState];
-			updated[column] = {
-				...updated[column],
-				tickets: update,
-			};
-			return updated;
+	let columnDragEnd = (update: any) => {
+		if (!update.destination) return;
+		let finalOrder: AllColumns[] = [];
+		let columnOrder = Array.from(columns);
+		const [newOrder] = columnOrder.splice(update.source.index, 1);
+		columnOrder.splice(update.destination.index, 0, newOrder);
+		columnOrder.map((column, index) => {
+			finalOrder.push({ ...column, order: index });
 		});
-	};
-
-	let handleOnDragEnd = (update: any) => {
-		if (update.type === 'Ticket') {
-			return ticketDragEnd(update);
-		}
-		return columnDragEnd(update);
+		setColumns(finalOrder);
+		setColumnsUpdate(true);
 	};
 
 	let ticketDragEnd = (update: any) => {
 		const { destination, source } = update;
 		if (!update.destination) return;
-
-		console.log(update);
 
 		const sourceColumnIndex = columns.findIndex(
 			(column) => column.title === source.droppableId
@@ -190,11 +170,43 @@ const TeamBoard = (props: IProps) => {
 			return currentFocusUpdate(update.draggableId, destination.index);
 		}
 
-		if (destination.droppableId === 'Assigned') {
-			return console.log('Assigned Function here');
+		if (destination.droppable === 'Assigned') {
+			return console.log('Assigned drop');
 		}
 
-		return unAssignedUpdate(update.draggableId, destination.index);
+		if (!props.isSolo && destination.droppable === 'Tasks') {
+			return console.log('needs unassigned');
+		}
+
+		return unCompletedTaskUpdate(update.draggableId, destination.index);
+	};
+
+	let sameColumnDrop = (update: Tickets[], column: number) => {
+		setColumns((prevState) => {
+			const updated = [...prevState];
+			updated[column] = {
+				...updated[column],
+				tickets: update,
+			};
+			return updated;
+		});
+	};
+
+	let unCompletedTaskUpdate = (id: string, index: number) => {
+		columns.forEach((column) => {
+			const ticketIndex = column.tickets.findIndex(
+				(ticket) => ticket._id === id
+			);
+			if (ticketIndex !== -1) {
+				const updatedTicket = {
+					...column.tickets[ticketIndex],
+					completed: false,
+					currentFocus: false,
+					order: index,
+				};
+				updateTicketOnServer(updatedTicket, index);
+			}
+		});
 	};
 
 	let ticketCompletedUpdate = (id: string, index: number) => {
@@ -214,19 +226,6 @@ const TeamBoard = (props: IProps) => {
 		});
 	};
 
-	let columnDragEnd = (update: any) => {
-		if (!update.destination) return;
-		let finalOrder: AllColumns[] = [];
-		let columnOrder = Array.from(columns);
-		const [newOrder] = columnOrder.splice(update.source.index, 1);
-		columnOrder.splice(update.destination.index, 0, newOrder);
-		columnOrder.map((column, index) => {
-			finalOrder.push({ ...column, order: index });
-		});
-		setColumns(finalOrder);
-		setColumnsUpdate(true);
-	};
-
 	let currentFocusUpdate = (id: string, index: number) => {
 		columns.forEach((column) => {
 			const ticketIndex = column.tickets.findIndex(
@@ -237,25 +236,6 @@ const TeamBoard = (props: IProps) => {
 					...column.tickets[ticketIndex],
 					completed: false,
 					currentFocus: true,
-					order: index,
-				};
-				updateTicketOnServer(updatedTicket, index);
-			}
-		});
-	};
-
-	let unAssignedUpdate = (id: string, index: number) => {
-		columns.forEach((column) => {
-			const ticketIndex = column.tickets.findIndex(
-				(ticket) => ticket._id === id
-			);
-			if (ticketIndex !== -1) {
-				const updatedTicket = {
-					...column.tickets[ticketIndex],
-					completed: false,
-					currentFocus: false,
-					assigned: false,
-					assignedTo: '',
 					order: index,
 				};
 				updateTicketOnServer(updatedTicket, index);
@@ -284,14 +264,11 @@ const TeamBoard = (props: IProps) => {
 				allTicketIds.push(ticket._id);
 			});
 		});
-		axiosProject
-			.patch('/tickets/reorder', {
-				ticketIds: allTicketIds,
-			})
-			.then((response) => {
-				console.log(response);
-			});
+		axiosProject.patch('/tickets/reorder', {
+			ticketIds: allTicketIds,
+		});
 	};
+
 	let sendingColumnOrder = () => {
 		if (columns.length === 0) return;
 		let columnsData: any = [];
@@ -303,11 +280,20 @@ const TeamBoard = (props: IProps) => {
 			.patch(`/projects/${props.id}`, {
 				columns: columnsData,
 			})
-			.then((response) => {
-				if (response.status === 200) {
+			.then((res) => {
+				console.log(res);
+				if (res.status === 200) {
+					dispatch(updateProjectOrder(res.data));
 					setColumnsUpdate(false);
 				}
 			});
+	};
+
+	let handleOnDragEnd = (update: any) => {
+		if (update.type === 'Ticket') {
+			return ticketDragEnd(update);
+		}
+		return columnDragEnd(update);
 	};
 
 	return (
@@ -344,4 +330,4 @@ const TeamBoard = (props: IProps) => {
 	);
 };
 
-export default TeamBoard;
+export default Board;

@@ -1,49 +1,38 @@
 import { RootState } from '../app/store';
 import { useSelector } from 'react-redux';
 
-import SoloBoard from '../Components/soloBoard';
-import TeamBoard from '../Components/teamBoard';
+import Board from '../Components/board';
 import { useState, useEffect } from 'react';
 
 const TaskManager = () => {
-	const [soloOrTeam, setSoloOrTeam] = useState<string>('');
-	const hasTeam = useSelector(
+	const [isSolo, setIsSolo] = useState<boolean>(true);
+	const team = useSelector(
 		(state: RootState) => state.projects.currentProject
 	);
 
 	useEffect(() => {
 		teamCheck();
-	}, []);
-
-	useEffect(() => {
-		teamCheck();
-	}, [hasTeam]);
+	}, [team]);
 
 	const teamCheck = () => {
-		if (JSON.stringify(hasTeam) === '{}') {
+		if (JSON.stringify(team) === '{}') {
 			return;
 		}
-		if (!hasTeam) {
-			console.log('No Project');
-		}
-		if (hasTeam.admins?.length !== 0 || hasTeam.teams?.length !== 0) {
-			setSoloOrTeam('Team');
+		if (!team) {
 			return;
 		}
-		setSoloOrTeam('Solo');
+		if (team.admins?.length !== 0 || team.teams?.length !== 0) {
+			setIsSolo(false);
+			return;
+		}
+		setIsSolo(true);
 	};
 
 	return (
 		<>
 			<section className="task-manager">
 				<div className="task-manager_container">
-					{soloOrTeam === 'Team' ? (
-						<TeamBoard id={hasTeam._id} />
-					) : soloOrTeam === 'Solo' ? (
-						<SoloBoard id={hasTeam._id} />
-					) : (
-						<div></div>
-					)}
+					<Board id={team._id} isSolo={isSolo} />
 				</div>
 			</section>
 		</>

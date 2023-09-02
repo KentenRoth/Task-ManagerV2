@@ -54,10 +54,21 @@ export const projectsSlice = createSlice({
 		addTeamMember: (state, action: PayloadAction<Projects>) => {
 			state.currentProject = action.payload;
 		},
+		updateProjectOrder: (state, action: PayloadAction<Projects>) => {
+			let updatedProject = action.payload;
+			let updatedProjects = state.projects.map((project) =>
+				project._id === updatedProject._id ? updatedProject : project
+			);
+			return { ...state, projects: updatedProjects };
+		},
 	},
 });
 
-export const { currentProject, addNewProject, addTeamMember } =
-	projectsSlice.actions;
+export const {
+	currentProject,
+	addNewProject,
+	addTeamMember,
+	updateProjectOrder,
+} = projectsSlice.actions;
 
 export default projectsSlice.reducer;

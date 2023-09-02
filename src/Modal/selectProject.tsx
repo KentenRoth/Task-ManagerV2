@@ -5,50 +5,16 @@ import { currentProject } from '../features/projectSlice';
 import { addProjectTickets } from '../features/ticketSlice';
 import axiosProject from '../axios/axiosProject';
 
+import { Projects } from '../types';
+
 interface IProps {
-	projects: {
-		admin?: Teammember[];
-		teams?: Teammember[];
-		title: string;
-		created: number;
-		_id: string;
-		tokens: Tokens[];
-		owner: string;
-		columns?: Columns[];
-	}[];
+	projects: Projects[];
 	show(): void;
-}
-
-type Project = {
-	admins?: Teammember[];
-	teams?: Teammember[];
-	title: string;
-	created: number;
-	_id: string;
-	tokens: Tokens[];
-	owner: string;
-	columns?: Columns[];
-};
-
-interface Teammember {
-	_id: string;
-	name: string;
-}
-
-interface Columns {
-	_id: string;
-	title: string;
-	order: number;
-}
-
-interface Tokens {
-	_id: string;
-	token: string;
 }
 
 const SelectProject = (props: IProps) => {
 	const [disableButton, setDisableButton] = useState(true);
-	const [project, setProject] = useState({} as Project);
+	const [project, setProject] = useState({} as Projects);
 
 	const dispatch = useDispatch<AppDispatch>();
 

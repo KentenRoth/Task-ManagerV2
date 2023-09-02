@@ -2,25 +2,12 @@ import React from 'react';
 import Ticket from '../Components/Tickets/ticket';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
+import { Tickets } from '../types';
+
 interface IProps {
 	title: string;
 	tickets: Tickets[];
 	index: number;
-}
-
-interface Tickets {
-	_id: string;
-	title: string;
-	summary: string;
-	description: string;
-	priority: string;
-	status: string;
-	owner: string;
-	assignedTo: string;
-	created: number;
-	completed: boolean;
-	assigned: boolean;
-	currentFocus: boolean;
 }
 
 const Columns = (props: IProps) => {

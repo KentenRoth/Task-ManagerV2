@@ -9,30 +9,10 @@ import axiosUser from '../axios/axiosUser';
 import Columns from './columns';
 import { updateProjectTickets } from '../features/ticketSlice';
 
+import { Tickets, AllColumns } from '../types';
+
 interface IProps {
 	id: string;
-}
-
-interface Tickets {
-	_id: string;
-	title: string;
-	summary: string;
-	description: string;
-	priority: string;
-	status: string;
-	owner: string;
-	assignedTo: string;
-	created: number;
-	completed: boolean;
-	assigned: boolean;
-	currentFocus: boolean;
-	order: number;
-}
-
-interface AllColumns {
-	title: string;
-	tickets: Tickets[];
-	order?: number;
 }
 
 const SoloBoard = (props: IProps) => {

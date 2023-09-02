@@ -1,20 +1,6 @@
 import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
 
-type Tickets = {
-	_id: string;
-	title: string;
-	summary: string;
-	description: string;
-	priority: string;
-	status: string;
-	owner: string;
-	assignedTo: string;
-	created: number;
-	completed: boolean;
-	assigned: boolean;
-	currentFocus: boolean;
-	order: number;
-};
+import { Tickets } from '../types';
 
 type InitialState = {
 	tickets: Tickets[];

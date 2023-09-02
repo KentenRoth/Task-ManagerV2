@@ -7,30 +7,10 @@ import axiosUser from '../axios/axiosUser';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { updateProjectTickets } from '../features/ticketSlice';
 
+import { AllColumns, Tickets } from '../types';
+
 interface IProps {
 	id: string;
-}
-
-interface Tickets {
-	_id: string;
-	title: string;
-	summary: string;
-	description: string;
-	priority: string;
-	status: string;
-	owner: string;
-	assignedTo: string;
-	created: number;
-	completed: boolean;
-	assigned: boolean;
-	currentFocus: boolean;
-	order: number;
-}
-
-interface AllColumns {
-	title: string;
-	tickets: Tickets[];
-	order?: number;
 }
 
 const TeamBoard = (props: IProps) => {

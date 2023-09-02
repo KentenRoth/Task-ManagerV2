@@ -6,26 +6,12 @@ import axiosProject from '../../axios/axiosProject';
 import { updateProjectTickets } from '../../features/ticketSlice';
 import AssignedTo from './assignedTo';
 import Description from './description';
+import { Tickets } from '../../types';
 
 import { Draggable } from 'react-beautiful-dnd';
 
-interface Ticket {
-	_id: string;
-	title: string;
-	summary: string;
-	description: string;
-	priority: string;
-	status: string;
-	owner: string;
-	assignedTo: string;
-	created: number;
-	completed: boolean;
-	assigned: boolean;
-	currentFocus: boolean;
-}
-
 type IProps = {
-	ticket: Ticket;
+	ticket: Tickets;
 	index: number;
 };
 

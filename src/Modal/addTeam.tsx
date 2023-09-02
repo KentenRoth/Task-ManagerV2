@@ -5,6 +5,8 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../app/store';
 import { addTeamMember } from '../features/projectSlice';
 
+import { Project } from '../types';
+
 interface Form {
 	memberLevel: string;
 	username: string;
@@ -15,11 +17,6 @@ interface Error {
 	username: boolean;
 	submitHandled: boolean;
 }
-
-type Project = {
-	admins?: Teammember[];
-	teams?: Teammember[];
-};
 
 interface Teammember {
 	_id: string;

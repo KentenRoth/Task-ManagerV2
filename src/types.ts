@@ -46,6 +46,11 @@ export interface Project {
 	teams?: Teammember[];
 }
 
+export interface Teammember {
+	_id: string;
+	name: string;
+}
+
 interface Tokens {
 	_id: string;
 	token: string;
@@ -55,9 +60,4 @@ interface Columns {
 	_id: string;
 	title: string;
 	order: number;
-}
-
-interface Teammember {
-	_id: string;
-	name: string;
 }

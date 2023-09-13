@@ -20,11 +20,12 @@ const Columns = (props: IProps) => {
 			>
 				{(provided) => (
 					<div
+						className="column_container"
 						ref={provided.innerRef}
 						{...provided.draggableProps}
 						{...provided.dragHandleProps}
 					>
-						<div className="column_container">
+						<div className="task_wrapper">
 							<div className="column_title">
 								<h2>{props.title}</h2>
 							</div>

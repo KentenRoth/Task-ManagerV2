@@ -31,9 +31,7 @@ const TaskManager = () => {
 	return (
 		<>
 			<section className="task-manager">
-				<div className="task-manager_container">
-					<Board id={team._id} isSolo={isSolo} />
-				</div>
+				<Board id={team._id} isSolo={isSolo} />
 			</section>
 		</>
 	);

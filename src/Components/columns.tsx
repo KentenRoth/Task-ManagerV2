@@ -8,6 +8,7 @@ interface IProps {
 	title: string;
 	tickets: Tickets[];
 	index: number;
+	details(id: string): void;
 }
 
 const Columns = (props: IProps) => {
@@ -46,6 +47,9 @@ const Columns = (props: IProps) => {
 														<Ticket
 															key={ticket._id}
 															ticket={ticket}
+															details={
+																props.details
+															}
 															index={index}
 														/>
 													);

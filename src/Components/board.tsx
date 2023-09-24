@@ -9,6 +9,7 @@ import { updateProjectTickets } from '../features/ticketSlice';
 
 import { AllColumns, Tickets } from '../types';
 import { updateProjectOrder } from '../features/projectSlice';
+import ViewTicket from '../Modal/viewTicket';
 
 interface IProps {
 	id: string;
@@ -24,6 +25,8 @@ const Board = (props: IProps) => {
 	const [isLoaded, setLoaded] = useState<boolean>(false);
 	const [columnsUpdate, setColumnsUpdate] = useState<boolean>(false);
 	const [initialSort, setInitialSort] = useState<boolean>(true);
+	const [showTicketDetails, setShowTicketDetails] = useState(false);
+	const [ticketDetails, setTicketDetails] = useState<Tickets>();
 
 	const dispatch = useDispatch<AppDispatch>();
 
@@ -281,7 +284,6 @@ const Board = (props: IProps) => {
 				columns: columnsData,
 			})
 			.then((res) => {
-				console.log(res);
 				if (res.status === 200) {
 					dispatch(updateProjectOrder(res.data));
 					setColumnsUpdate(false);
@@ -294,6 +296,17 @@ const Board = (props: IProps) => {
 			return ticketDragEnd(update);
 		}
 		return columnDragEnd(update);
+	};
+
+	const getTicketId = (id: string) => {
+		const ticket = allTickets.tickets.filter((ticket) => ticket._id === id);
+		setTicketDetails(ticket[0]);
+		setShowTicketDetails((current) => !current);
+	};
+
+	const toggleDetails = () => {
+		setShowTicketDetails((current) => !current);
+		setTicketDetails(undefined);
 	};
 
 	return (
@@ -316,6 +329,7 @@ const Board = (props: IProps) => {
 									<Columns
 										title={column.title}
 										tickets={column.tickets}
+										details={getTicketId}
 										index={index}
 										key={index}
 									/>
@@ -326,6 +340,9 @@ const Board = (props: IProps) => {
 					)}
 				</Droppable>
 			</DragDropContext>
+			{showTicketDetails === true && ticketDetails && (
+				<ViewTicket show={toggleDetails} ticket={ticketDetails} />
+			)}
 		</>
 	);
 };

@@ -2,10 +2,9 @@ import Ticket from '../Components/Tickets/ticket';
 
 import { Tickets } from '../types';
 
-// TODO sort by Current Focus (toggles to completed), High, Medium, Low,
-
 interface IProps {
 	tickets: Tickets[];
+	details(id: string): void;
 }
 
 const SoloTickets = (props: IProps) => {
@@ -13,7 +12,12 @@ const SoloTickets = (props: IProps) => {
 		<>
 			{props.tickets.map((ticket, index) => {
 				return (
-					<Ticket key={ticket._id} ticket={ticket} index={index} />
+					<Ticket
+						key={ticket._id}
+						ticket={ticket}
+						index={index}
+						details={props.details}
+					/>
 				);
 			})}
 		</>

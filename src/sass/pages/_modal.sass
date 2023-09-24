@@ -2,6 +2,7 @@
     display: none
 
 .modal
+    pointer-events: all
     position: absolute
     top: 0
     left: 0
@@ -20,10 +21,11 @@
         .close
             position: absolute
             top: 10px
-            right: 10px
+            right: 20px
             cursor: pointer
             color: red
             font-weight: 700
+            font-size: 25px
         form
             position: relative
             z-index: 2
@@ -32,3 +34,18 @@
             flex-direction: column
             padding: 3rem
             border-radius: 10px
+    &_content
+        position: relative
+        background: $mid-gray
+        display: flex
+        flex-direction: column
+        padding: 3rem
+        border-radius: 10px
+        h3
+            color: white
+            padding-bottom: 10px
+            margin: 0
+        p
+            padding-bottom: 20px
+            margin: 0
+            color: white
